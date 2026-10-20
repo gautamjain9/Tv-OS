@@ -71,9 +71,7 @@ Base canvas: 1920×1080 (scale directly for 4K via CSS zoom or Enact's resolutio
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                                                                 │
-│   09:42 · Monday, Oct 20       ⚙  🔍                            │
-│                                                                 │
-│   [Big hero: last-watched / featured]                           │
+│   09:42  ·  Monday, Oct 20                                      │
 │                                                                 │
 │   Apps                                                          │
 │   [tile] [tile] [tile] [tile] [tile]  →                         │
@@ -84,7 +82,14 @@ Base canvas: 1920×1080 (scale directly for 4K via CSS zoom or Enact's resolutio
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-Minimal, no ads, no "trending now from LG," no partner promotions.
+Minimal. Nothing else. No hero band. No settings or search icons in the
+top-right. No ads. No "trending now from LG." No partner promotions. No
+weather. No recently-played strip. No nothing.
+
+**Reasoning for the deletions:** After reviewing `Ansub/tv-detox` (the
+closest-spirit project on Android TV), its launcher ships clock + apps +
+inputs + nothing. That's the right scope. Features earn their place by
+being asked for after v0.1 ships, not by being pre-added.
 
 ## 7. What we are NOT doing (keep this list)
 
