@@ -6,20 +6,23 @@
 	height: @tile-h;
 	border-radius: 20px;
 	background: @bg-elevated;
-	// Subtle top-highlight on border for the "lifted" look.
 	border: 1px solid @border-subtle;
 	display: flex;
 	align-items: flex-end;
 	cursor: pointer;
 	position: relative;
+	outline: none;
 	transition:
 		transform @dur-focus @ease-snap,
 		box-shadow @dur-focus @ease-snap,
 		background @dur-focus @ease-snap,
 		border-color @dur-focus @ease-snap;
 
-	// Focus state — needs to be unmistakable on a glossy TV. White ring
-	// at a visible offset + strong accent glow + scale lift.
+	// Belt + suspenders: react to BOTH the native browser :focus pseudo-class
+	// AND Spottable's .spottable-focused class. Whichever ends up on the
+	// element will trigger the focused styles. On webOS Chromium both the
+	// DOM focus and Spottable's class should land on the same node.
+	&:focus,
 	&:global(.spottable-focused) {
 		transform: scale(1.06);
 		background: @bg-hover;

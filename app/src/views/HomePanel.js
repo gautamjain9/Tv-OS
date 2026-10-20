@@ -20,26 +20,41 @@ const INPUTS = [
 ];
 
 /**
- * HomePanel is the single screen. We set initial Spotlight focus on mount
- * and surface a visible debug line (bottom-left) so we can SEE on the TV
- * whether Spotlight thinks the DOM has focusable tiles yet. This debug
- * line gets removed once focus is proven working.
+ * HomePanel is the single screen. We force initial focus by calling the
+ * DOM element's own .focus() instead of Spotlight.focus(elem) — real DOM
+ * focus events are what Spottable listens for to add .spottable-focused.
+ *
+ * The debug line below surfaces Spotlight state and the ACTUAL className
+ * on the focused DOM element, so we can see from a photo what's happening
+ * in the WebView.
  */
 const HomePanel = () => {
-	const [debug, setDebug] = useState('mounted');
+	const [debug, setDebug] = useState('mount');
 
 	useEffect(() => {
 		const t = setTimeout(() => {
 			const spottables = document.querySelectorAll('.spottable');
-			const info = `spottable count: ${spottables.length}  ·  focused: ${Spotlight.getCurrent()?.className || 'none'}`;
-			setDebug(info);
-			if (spottables.length > 0) {
-				Spotlight.focus(spottables[0]);
-				setTimeout(() => {
-					setDebug(info + `  ·  after-focus: ${Spotlight.getCurrent()?.className || 'none'}`);
-				}, 100);
+			if (spottables.length === 0) {
+				setDebug('no spottable elements in DOM');
+				return;
 			}
-		}, 250);
+			// Call .focus() on the real DOM node — triggers a native focus
+			// event. Spottable's onFocus handler listens for this and adds
+			// the .spottable-focused class. Calling Spotlight.focus(elem)
+			// alone updates Spotlight's internal state but may not fire a
+			// DOM focus event in Enact 4.0.9.
+			spottables[0].focus();
+			// Tell Spotlight too, so arrow-key spatial-nav is consistent.
+			Spotlight.focus(spottables[0]);
+
+			setTimeout(() => {
+				const current = document.activeElement;
+				const cls = current ? current.className : 'no activeElement';
+				const count = document.querySelectorAll('.spottable').length;
+				const focusedCount = document.querySelectorAll('.spottable-focused').length;
+				setDebug(`count=${count} focused=${focusedCount} active=${cls.slice(0, 80)}`);
+			}, 150);
+		}, 300);
 		return () => clearTimeout(t);
 	}, []);
 
