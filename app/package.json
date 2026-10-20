@@ -36,5 +36,6 @@
   },
   "enact": {
     "theme": "sandstone"
-  }
+  },
+  "// comment-note": "DO NOT run `npm audit fix --force` on this project. The 'vulnerabilities' are transitive dev-tool deps; forcing fixes bumps @enact/cli past 6.x, which is incompatible with the webOS 22 target. The pin is intentional."
 }
