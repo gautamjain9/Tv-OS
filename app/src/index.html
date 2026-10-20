@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=1920,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+	<title>Tv-OS</title>
+	<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+	<main id="app" class="app">
+		<header class="topbar">
+			<span id="clock" class="clock">--:--</span>
+			<span class="date" id="date">—</span>
+		</header>
+
+		<section class="row">
+			<h2 class="row-title">Apps</h2>
+			<div class="scroller" id="apps-row" role="list"></div>
+		</section>
+
+		<section class="row">
+			<h2 class="row-title">Inputs</h2>
+			<div class="scroller" id="inputs-row" role="list"></div>
+		</section>
+
+		<div id="debug" class="debug"></div>
+	</main>
+	<script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+/* Tv-OS — vanilla launcher stylesheet
+ * Design tokens live inline here (CSS custom properties) so there's one
+ * place to tune. See docs/design/01-visual-language.md for the system.
+ */
+
+:root {
+	/* Backgrounds */
+	--bg-base: #0A0A0C;
+	--bg-elevated: #1A1A20;
+	--bg-hover: #26262E;
+
+	/* Foregrounds */
+	--fg-primary: #FFFFFF;
+	--fg-secondary: rgba(255, 255, 255, 0.72);
+	--fg-tertiary: rgba(255, 255, 255, 0.48);
+
+	/* Accent */
+	--accent: #7C9CFF;
+	--accent-glow: rgba(124, 156, 255, 0.5);
+
+	/* Borders */
+	--border-subtle: rgba(255, 255, 255, 0.12);
+	--border-strong: rgba(255, 255, 255, 0.95);
+
+	/* Motion */
+	--ease-snap: cubic-bezier(0.2, 0.8, 0.2, 1);
+	--dur-focus: 180ms;
+
+	/* Layout */
+	--tile-w: 420px;
+	--tile-h: 240px;
+	--tile-input-w: 280px;
+	--tile-input-h: 160px;
+	--tile-gap: 40px;
+	--gutter: 120px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	background: var(--bg-base);
+	color: var(--fg-primary);
+	font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	overflow: hidden;
+	cursor: none; /* no pointer on TV */
+}
+
+.app {
+	width: 100vw;
+	min-height: 100vh;
+	padding: var(--gutter) var(--gutter) 80px;
+	display: flex;
+	flex-direction: column;
+	gap: 56px;
+	position: relative;
+}
+
+/* Top bar */
+.topbar {
+	display: flex;
+	align-items: baseline;
+	gap: 16px;
+	color: var(--fg-secondary);
+	font-weight: 500;
+}
+.topbar .clock {
+	color: var(--fg-primary);
+	font-size: 48px;
+	font-weight: 700;
+	letter-spacing: -0.5px;
+}
+.topbar .date {
+	font-size: 28px;
+	letter-spacing: 0.5px;
+}
+
+/* Rows */
+.row { margin: 0; }
+.row-title {
+	font-size: 44px;
+	font-weight: 600;
+	line-height: 52px;
+	margin: 0 0 32px;
+	letter-spacing: -0.5px;
+	color: var(--fg-primary);
+}
+.scroller {
+	display: flex;
+	gap: var(--tile-gap);
+	overflow-x: auto;
+	padding-bottom: 8px;
+	scrollbar-width: none;
+}
+.scroller::-webkit-scrollbar { display: none; }
+
+/* Tiles */
+.tile {
+	flex: 0 0 var(--tile-w);
+	width: var(--tile-w);
+	height: var(--tile-h);
+	border-radius: 20px;
+	background: var(--bg-elevated);
+	border: 1px solid var(--border-subtle);
+	display: flex;
+	align-items: flex-end;
+	position: relative;
+	outline: none;
+	transition:
+		transform var(--dur-focus) var(--ease-snap),
+		box-shadow var(--dur-focus) var(--ease-snap),
+		background var(--dur-focus) var(--ease-snap),
+		border-color var(--dur-focus) var(--ease-snap);
+}
+.tile[data-variant="input"] {
+	flex: 0 0 var(--tile-input-w);
+	width: var(--tile-input-w);
+	height: var(--tile-input-h);
+}
+.tile .inner { width: 100%; padding: 28px 32px; }
+.tile .label {
+	font-size: 30px;
+	font-weight: 600;
+	line-height: 36px;
+	color: var(--fg-primary);
+	letter-spacing: -0.2px;
+}
+
+/* Focus — triggered by native DOM focus. We own the key handling, so
+ * elem.focus() is always what Spotlight state is based on. */
+.tile:focus,
+.tile.focused {
+	transform: scale(1.06);
+	background: var(--bg-hover);
+	border-color: var(--border-strong);
+	box-shadow:
+		0 0 0 6px rgba(255, 255, 255, 0.95),
+		0 0 48px 12px var(--accent-glow);
+	z-index: 1;
+}
+
+/* Debug overlay — remove once stable. */
+.debug {
+	position: fixed;
+	left: 24px;
+	bottom: 24px;
+	font-family: ui-monospace, Menlo, monospace;
+	font-size: 16px;
+	color: rgba(255, 255, 255, 0.6);
+	background: rgba(0, 0, 0, 0.55);
+	padding: 8px 12px;
+	border-radius: 6px;
+	max-width: 90vw;
+	white-space: nowrap;
+	overflow: hidden;
+	pointer-events: none;
+}

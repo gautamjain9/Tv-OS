@@ -1,71 +1,77 @@
-# Tv-OS Launcher (app/)
+# Tv-OS Launcher (v0.2 — vanilla rewrite)
 
-Enact 4.0.9 + Sandstone 2.0.5 launcher app, targeting webOS 22 (Digie Hub).
+Zero frameworks. One `index.html`, one `styles.css`, one `main.js`.
+Build is a 50-line Node script that copies files into `dist/`.
 
-## Prereqs (on the laptop)
+## Why
 
-- Node.js 18+ and npm
-- The TV on the same WiFi network, with Developer Mode installed and running
-- The TV's IP address and Dev Mode passphrase
+v0.1 tried Enact + Sandstone. Build worked; focus never worked on the TV
+despite 4 iterations. See `docs/research/06-enact-postmortem.md`. The
+root cause (likely: Spottable focus-class injection timing in Enact 4.0.9
+on the Hub WebView) was deeper than the time we had budgeted. Vanilla
+HTML gives us 100% control over focus + keyboard events and matches the
+project's debloat philosophy anyway.
 
-## Install
+## Prereqs (on your laptop)
+
+- Node.js 18+ (only used by the tiny build script — no bundler, no deps
+  for the launcher itself)
+- The TV paired via `ares-setup-device` (see `docs/plan/02-laptop-setup-step-by-step.md`)
+- The webOS CLI globally: `sudo npm install -g @webos-tools/cli`
+
+## Install + deploy
 
 ```bash
 cd app
-npm install
+npm install          # installs only @webos-tools/cli locally
+npm run deploy       # build + ares-package + install + launch, all in one
 ```
 
-This also installs `@webos-tools/cli` locally. For global `ares-*` commands,
-run `npm install -g @webos-tools/cli` once.
-
-## Pair the TV once
+If you want the steps individually:
 
 ```bash
-ares-setup-device
-# Add a new device: name=tv, host=<TV IP>, port=9922,
-# username=prisoner, type=developer
-ares-novacom --device tv --getkey
-# When prompted, enter the exact passphrase shown on the TV's Dev Mode app.
-```
-
-## Dev loop
-
-```bash
-npm run pack-p           # production build into ./dist
-cd dist && ares-package .   # produce com.tvos.launcher_0.1.0_all.ipk
-ares-install -d tv ./com.tvos.launcher_0.1.0_all.ipk
+npm run build        # writes dist/
+cd dist && ares-package .
+ares-install -d tv ./com.tvos.launcher_0.2.0_all.ipk
 ares-launch -d tv com.tvos.launcher
 ```
 
-Or, after the first pair + first install:
-
-```bash
-npm run package-webos && npm run install-webos && npm run launch-webos
-```
-
-## Local browser preview
-
-```bash
-npm run serve
-# Open http://localhost:8080
-```
-
-Browser preview has no `window.webOS`; the `webosBridge` falls back to console
-logs. Visual tuning and navigation can be done entirely in the browser.
+**Every edit → bump `version` in `webos-meta/appinfo.json` AND
+`package.json`.** Same version numbers cause webOS to cache the WebView
+assets. We hit this in v0.1.
 
 ## Structure
 
 ```
 app/
-├── package.json           Enact + webOS CLI deps
+├── package.json
+├── scripts/build.js          # 50-line copy-only builder
 ├── webos-meta/
-│   └── appinfo.json       webOS app manifest (id: com.tvos.launcher)
+│   ├── appinfo.json          # id com.tvos.launcher, requiredACG set
+│   ├── icon.png              # (regenerate per docs/research/03-pre-sideload-audit.md)
+│   └── icon-large.png
 └── src/
-    ├── App/               Top-level Enact app
-    ├── views/             Panels (HomePanel for now)
-    ├── components/        Reusable UI (Tile, AppsRow, InputsRow, TopBar)
-    ├── services/
-    │   └── webosBridge.js LS2 shim (launchApp, openSettings)
-    └── theme/
-        └── tokens.less    Design tokens — see docs/design/01-visual-language.md
+    ├── index.html            # the entry
+    ├── styles.css            # all CSS, with tokens as :root custom properties
+    └── main.js               # ~200 lines total: clock, tiles, keyboard nav, LS2 bridge
 ```
+
+## What's in main.js
+
+- `APPS[]` + `INPUTS[]` — curated tile list. Edit here to add/remove tiles.
+- `launchApp(id)` — the one LS2 bridge call: `luna://com.webos.applicationManager/launch`.
+- Clock that ticks every 15 s (not every 1 s — saves CPU).
+- Keyboard handler for arrow keys + Enter/OK (webOS keyCodes).
+- Focus is just `element.focus()` on native `<button>`s. The `:focus` CSS
+  rule in `styles.css` draws the ring + glow. No framework in between.
+- A `#debug` overlay at bottom-left shows what the launcher thinks is
+  happening. Remove `<div id="debug">` from `index.html` once stable.
+
+## Debug
+
+If something doesn't work:
+
+- Read the debug line at the bottom-left of the TV screen first.
+- Enable the web inspector: `ares-inspect --device tv --app com.tvos.launcher --open`
+  (opens Chrome DevTools on your Mac pointed at the TV's app).
+- Any error in `main.js` lands in that Console tab.

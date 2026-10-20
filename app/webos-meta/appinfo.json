@@ -1,6 +1,6 @@
 {
   "id": "com.tvos.launcher",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "vendor": "Tv-OS",
   "type": "web",
   "main": "index.html",
@@ -9,7 +9,7 @@
   "largeIcon": "icon-large.png",
   "iconColor": "red",
   "resolution": "1920x1080",
-  "requiredMemory": 128,
+  "requiredMemory": 64,
   "disableBackHistoryAPI": true,
   "requiredACG": ["application.launcher"]
 }
