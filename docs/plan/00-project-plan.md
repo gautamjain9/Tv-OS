@@ -66,7 +66,7 @@ rendering over HDMI. Any TV, any brand, becomes a "dumb display." This is where 
   Hub firmware, exact prerequisites.
 - [ ] Backup/recovery options: can we dump the TV's current firmware before rooting?
 
-(L2 items above: research in progress in `docs/research/07-l2-boot-takeover.md`.)
+(L2 items above: still open; no L2 research file yet.)
 
 ## Orchestration rules (how we work)
 

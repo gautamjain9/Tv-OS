@@ -6,8 +6,8 @@ If you're a new Claude instance: this is your single required read. Everything e
 If you're the user: your first message to the new Claude session is at the bottom under "User's first message."
 
 Last updated: 2026-10-20
-Last commit before this update: `f607a64` (merge of the cloud v0.2.0 work with the local docs audit + v0.1.4 attempt)
-Current version to install: **v0.2.1** (vanilla, in `app/`; = v0.2.0 + LS2-bridge fix + audit fixes)
+Last code commit: `e03a2bd` (v0.2.1)
+Installed on the TV and verified: **v0.2.1** (vanilla, in `app/`; = v0.2.0 + LS2-bridge fix + audit fixes)
 
 ---
 
@@ -18,12 +18,12 @@ Build a minimal, Apple-TV-quality launcher for a Digie LG-webOS-22-based TV. Rep
 ## 2. State of play, blunt
 
 - **Repo is merged and current on the Mac.** Two lines of work ran in parallel and were merged in `f607a64`: the cloud session's v0.2.0 rewrite + this handoff + the postmortem (`dc6405a`), and the local session's docs audit (`14842e4`) + an Enact v0.1.4 fix attempt (`bf92770`, never installed, preserved on branch `backup/local-v0.1.4`). The user's `~/Tv-OS` already has the merge. **Do not reset it to origin** (see §9). If `git status` says the branch is ahead of origin, that only means it has not been pushed yet.
-- **TV paired, but unreachable at last check.** Dev Mode installed, Key Server ON, auto-update OFF, SSH key fetched; `ares-device -i --device tv` returned live data earlier on 2026-10-20. Later that day the TV did not answer at 192.168.29.246 (`EHOSTUNREACH`) — most likely it was off, or DHCP gave it a new IP. §5 starts with a reachability check and a one-line IP fix. See `docs/research/01-device-decision.md`.
+- **TV paired and reachable.** Dev Mode installed, Key Server ON, auto-update OFF, SSH key fetched; `ares-device -i -d tv` returns live data. Once on 2026-10-20 it did not answer (`EHOSTUNREACH`) because the TV was off; it came back at the same IP. The IP is DHCP, so §5 keeps a reachability check and a one-line IP fix. See `docs/research/01-device-decision.md`.
 - **TV facts:** Digie AR-50, webOS22 / 7.5.8-28, firmware 04.56.35, 1.58 GB free of 1.92 GB, boardType `K8LP_DVB_AJ`, otaId `HE_DTV_C22P_AFADATAA`, last known LAN IP 192.168.29.246, SSH port 9922, device name `tv`.
 - **L1 Enact (v0.1.0–0.1.4) abandoned.** The install cycles chased an Enact + Sandstone + Spotlight focus bug that never resolved; v0.1.3 was installed on the TV (focus result not recorded); v0.1.4 never ran. A later source audit explains it (wrong focus class, OK handler on the wrong component, launch call needing `webOSTV.js`). Full postmortem: `docs/research/06-enact-postmortem.md`.
-- **L1 v0.2.1 vanilla is what to install.** `app/` is ~200 lines of vanilla JS + one CSS file, ~5 KB IPK, zero frameworks, zero bundlers; the only devDep is `@webos-tools/cli`. v0.2.0 was build-verified in the cloud (5.3 KB IPK).
-- **Critical bug fixed before any install.** v0.2.0's `main.js` called `window.webOS.service.request`, which only exists when LG's `webOSTV.js` is loaded — and we do not load it. On the TV, OK would have done nothing. `main.js` now calls the native `WebOSServiceBridge` / `PalmServiceBridge` directly. That fix plus the other audit fixes ship as **v0.2.1**. **Nothing from v0.2.x has been installed on the TV yet.** That's where the next session picks up.
-- **L2 (root + home-screen takeover) deferred.** Blocked on L1 proving out. Research is being written in `docs/research/07-l2-boot-takeover.md`; no L2 tooling exists yet (no `l2/` directory). See §7.
+- **L1 is proven: v0.2.1 is installed and passed all three checks on the TV (2026-10-20).** `app/` is ~300 lines of vanilla JS + one CSS file, 6.3 KB IPK, zero frameworks, zero bundlers; the only devDep is `@webos-tools/cli`. Results and platform facts read off the TV (Chromium 87.0.4280.88, native bridge present, `window.webOS` absent, LG Smart UI font present, Back = 461 swallowed, HOME never reaches the app): `docs/research/07-l1-on-tv-verification.md`.
+- **Critical bug fixed before any install.** v0.2.0's `main.js` called `window.webOS.service.request`, which only exists when LG's `webOSTV.js` is loaded — and we do not load it. On the TV, OK would have done nothing. `main.js` now calls the native `WebOSServiceBridge` / `PalmServiceBridge` directly. That fix plus the other audit fixes ship as **v0.2.1**, which is what is on the TV now.
+- **L2 (root + home-screen takeover) not started.** L1 is proven, so this is the next layer. No L2 research file and no L2 tooling exist yet (no `l2/` directory). Verified on the TV: without root, HOME always opens the stock webOS home, and exiting an app (e.g. Back out of YouTube) also lands there, not in Tv-OS. See §7.
 
 ## 3. The one rule
 
@@ -68,18 +68,18 @@ Tv-OS/
     │   ├── 04-build-dry-run-cloud.md      v0.1 history.
     │   ├── 05-tv-detox-comparison.md
     │   ├── 06-enact-postmortem.md
-    │   └── 07-l2-boot-takeover.md         L2 research (being written).
+    │   └── 07-l1-on-tv-verification.md    v0.2.1 on-TV results + measurements to take.
     ├── design/
     │   └── 01-visual-language.md          Tokens live in app/src/styles.css now.
     └── tv-side/
         └── 00-things-to-do-on-the-tv.md   TV-screen steps the user runs by hand.
 ```
 
-Not in git: `app/dist/` (build output; on the Mac it may still hold the stale v0.1.4 Enact build until the next `npm run build` wipes it) and `app/node_modules/` (may still hold old Enact packages; harmless, because `build.js` copies only `src/` and `webos-meta/` into the IPK).
+Not in git: `app/dist/` (build output), `app/node_modules/` (`@webos-tools/cli` only; the old Enact packages were pruned on 2026-10-20) and `app/package-lock.json` (gitignored, see §9).
 
 ## 5. The exact next thing to do
 
-**Install v0.2.1 on the TV.** Then verify three things.
+**Done on 2026-10-20: v0.2.1 is installed and all three checks passed.** Use this section to reinstall after any change (bump the version first, see §6).
 
 The Mac repo is already merged and current. Do **not** fetch-and-reset it (an earlier version of this section said to; that would have destroyed unpushed local commits — see §9).
 
@@ -113,7 +113,7 @@ Expected: the deploy takes about 5 seconds.
 2. **Do arrow keys move the ring between tiles?**
 3. **Does pressing OK on a focused tile launch the real app?**
 
-If all three are YES → L1 proven. Open L2 research.
+If all three are YES → L1 proven (it is, as of v0.2.1). Next: the measurements listed in `docs/research/07-l1-on-tv-verification.md`, then L2.
 If any NO → read the `#debug` overlay at the bottom-left of the screen (it reports what the launcher thinks is happening) and open `ares-inspect --device tv --app com.tvos.launcher --open` to attach Chrome DevTools.
 
 ## 6. The hard constraints — do not forget
@@ -125,7 +125,7 @@ If any NO → read the `#debug` overlay at the bottom-left of the screen (it rep
 
 ## 7. L2 — the user's actual end goal
 
-User wants Tv-OS to replace the stock webOS home screen entirely: press HOME → Tv-OS opens, not Digie's launcher. (Research in progress: `docs/research/07-l2-boot-takeover.md`. This section will be rewritten when it lands.) On webOS this requires:
+User wants Tv-OS to replace the stock webOS home screen entirely: press HOME → Tv-OS opens, not Digie's launcher. (No L2 research file exists yet; the steps below are the earlier outline, still unverified.) On webOS this requires:
 
 1. **Root the TV** via `faultmanager-autoroot` (works webOS 4.0+ incl. 7.5.8; `[UNVERIFIED]` on Digie Hub).
 2. **Install Homebrew Channel** on the rooted TV.
@@ -188,4 +188,4 @@ Paste exactly:
 
 > Read docs/HANDOFF.md and continue from there. The TV is paired, dev mode is on, I'm on my Mac in ~/Tv-OS and the repo is already merged, so do not reset it. Walk me through installing v0.2.1 one command at a time, starting with checking that the TV answers. Zero prose mixed into commands, zero apostrophes, zero `#` comments — zsh breaks on them.
 
-Then proceed with the three verification questions in §5.
+Then proceed with the three verification questions in §5. (As of 2026-10-20 they all passed on v0.2.1; a new session should start from §2 instead.)

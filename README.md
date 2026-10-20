@@ -16,13 +16,14 @@ Start here: **`docs/HANDOFF.md`** (state of play + the exact next commands).
   - v0.1.x (Enact + Sandstone, abandoned): v0.1.0–0.1.2 were sideloaded via Developer
     Mode; remote focus never worked; v0.1.3 was installed on the TV (focus result not recorded); v0.1.4 never ran. See
     `docs/research/06-enact-postmortem.md`.
-  - **v0.2.1 (vanilla HTML/CSS/JS, ~5 KB IPK):** built, not yet installed. It fixes a
-    v0.2.0 bug that would have made OK on the remote do nothing (the launch call needed
-    LG's `webOSTV.js`; it now uses the native service bridge).
-  - The TV did not answer at its last known IP at the last check — see HANDOFF §5.
+  - **v0.2.1 (vanilla HTML/CSS/JS, 6.3 KB IPK): installed and verified on the TV
+    (2026-10-20).** Focus lands on YouTube, arrows move the ring, OK launches the real app.
+    It fixes a v0.2.0 bug that would have made OK on the remote do nothing (the launch call
+    needed LG's `webOSTV.js`; it now uses the native service bridge). Results:
+    `docs/research/07-l1-on-tv-verification.md`.
   - TV readout: `docs/research/01-device-decision.md`.
-- **Phase 2 (L2 — root, debloat, HOME takeover):** research in progress in
-  `docs/research/07-l2-boot-takeover.md`. No L2 tooling yet.
+- **Phase 2 (L2 — root, debloat, HOME takeover):** not started. No L2 research file and
+  no L2 tooling yet. Without root, HOME always opens the stock webOS home (verified).
 - **Phase 3 (L3 — Raspberry Pi 5 universal box):** not started.
 
 ## Repo layout
@@ -56,7 +57,7 @@ Tv-OS/
     │   ├── 04-build-dry-run-cloud.md         v0.1 history: Enact build verified in a container.
     │   ├── 05-tv-detox-comparison.md         What we take from Ansub/tv-detox.
     │   ├── 06-enact-postmortem.md            Why Enact was abandoned for vanilla JS.
-    │   └── 07-l2-boot-takeover.md            L2 research (being written).
+    │   └── 07-l1-on-tv-verification.md       v0.2.1 on-TV results + measurements.
     ├── design/
     │   └── 01-visual-language.md             Visual + motion system (tokens live in app/src/styles.css).
     └── tv-side/

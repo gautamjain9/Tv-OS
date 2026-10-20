@@ -15,7 +15,7 @@
 | Free internal storage at project start | **1.58 GB** (budget constraint for everything we install) |
 | Total power-on time | 2456 hours (TV is well-used, not new) |
 | Auto-update | **OFF** (verified by photo; toggle in left position) |
-| TV LAN IP (2026-10-20) | **192.168.29.246** — DHCP, so it can change. Later the same day the TV did not answer at this IP (`EHOSTUNREACH`); `[UNVERIFIED]` whether it was off or re-addressed. Re-read the IP from the Dev Mode app before assuming it. |
+| TV LAN IP (2026-10-20) | **192.168.29.246** — DHCP, so it can change. Later the same day the TV did not answer at this IP (`EHOSTUNREACH`); `[VERIFIED]` it answered at the same IP again afterwards, so it had been off. Re-read the IP from the Dev Mode app before assuming it. |
 | Developer Mode | Installed, Dev Mode Status ON, Key Server ON |
 | **Board type** | `K8LP_DVB_AJ` (LG K8LP SoC family, DVB tuner, Asia region — reported by ares-device -i, 2026-10-20) |
 | **OTA ID** | `HE_DTV_C22P_AFADATAA` (Hub Edition DTV, C22P platform — reported by ares-device -i) |

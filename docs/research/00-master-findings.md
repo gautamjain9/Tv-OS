@@ -43,10 +43,11 @@ The user's TV is a **Digie-brand webOS TV**, not a genuine LG TV.
   platform **webOS Hub**; board `K8LP_DVB_AJ`; OTA ID `HE_DTV_C22P_AFADATAA`.
 - `[VERIFIED]` Developer Mode app is available on this Hub TV and works: Dev Mode ON,
   Key Server ON, `ares-device -i` pairing verified, Tv-OS v0.1.x (Enact) IPKs sideloaded
-  and running (focus broken — see `06-enact-postmortem.md`). v0.2.x not yet installed.
+  and running (focus broken — see `06-enact-postmortem.md`). `[VERIFIED]` v0.2.1 (vanilla)
+  installed 2026-10-20 and passed all three L1 checks — see `07-l1-on-tv-verification.md`.
 - `[VERIFIED]` Last known LAN IP 192.168.29.246, SSH port 9922, device name `tv`. At the
-  last check (2026-10-20) the TV did not answer at that IP (`EHOSTUNREACH`) — `[UNVERIFIED]`
-  whether it was off or DHCP gave it a new IP.
+  check earlier on 2026-10-20 the TV did not answer (`EHOSTUNREACH`); `[VERIFIED]` later the
+  same day it answered at the same IP, so it was off, not re-addressed. The IP is DHCP.
 - `[VERIFIED]` Storage: 1.92 GB total, 1.58 GB free at project start.
 - `[UNVERIFIED]` RAM of this specific unit (other Digie models list 1 GB; not read off
   this TV yet).
@@ -89,8 +90,9 @@ webosbrew community). Research framed strictly around that.
   compositor/launcher with something Apple-TV-fast. `[UNVERIFIED]` and fragile to try.
 - Biggest realistic wins from root: remove bloat, disable telemetry/ads, SSH access, run
   homebrew apps, set a custom startup app. Real but modest, and capped by 1GB RAM.
-- L2 research in progress: `docs/research/07-l2-boot-takeover.md` (being written). No L2
-  tooling exists yet (there is no `l2/` directory).
+- No L2 research file and no L2 tooling exist yet (there is no `l2/` directory).
+- `[VERIFIED]` (on the TV, 2026-10-20, `07-l1-on-tv-verification.md`) Without root, HOME is
+  handled by webOS and never reaches a sideloaded app; it always opens the stock home.
 
 ---
 
@@ -123,8 +125,8 @@ webosbrew community). Research framed strictly around that.
 - Orchestrator's honest assessment: hardware (1GB RAM) caps the ceiling hard; the third-party
   Hub firmware makes root `[UNVERIFIED]`. First gate (Developer Mode on the physical TV) is
   **passed**. L1 v0.1.x (Enact) was sideloaded, never got working focus, and was abandoned;
-  L1 v0.2.1 (vanilla HTML/CSS/JS, ~5 KB IPK) is built and waiting for its first install.
-  L2 research is open (`07-l2-boot-takeover.md`).
+  L1 v0.2.1 (vanilla HTML/CSS/JS, 6.3 KB IPK) is installed and **proven** on the TV
+  (`07-l1-on-tv-verification.md`). L2 is next; not started.
 
 ### Open action items (need the physical TV / user input)
 - [x] Read exact model number + webOS version off the TV — AR-50, webOS 22 / 7.5.8-28.

@@ -87,6 +87,5 @@ applies to webOS 22 on Digie Hub, but Hub-specific behavior is
 - IPK size on disk once installed (TV reports "Available Internal Storage"
   — compare 1.58 GB free before and after install).
 
-Numbers go in a dedicated `docs/research/NN-l1-measurements.md` (next free number;
-`05`–`07` are taken: tv-detox comparison, Enact postmortem, L2 boot-takeover research —
-so probably `08`). Not yet written; nothing has been measured on the TV yet.
+Numbers go in `docs/research/07-l1-on-tv-verification.md` (it already holds the
+2026-10-20 install results). Nothing has been measured on the TV yet.
