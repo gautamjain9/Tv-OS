@@ -17,6 +17,9 @@
 | Auto-update | **OFF** (verified by photo; toggle in left position) |
 | TV LAN IP (today) | **192.168.29.246** |
 | Developer Mode | Installed, Dev Mode Status ON, Key Server ON |
+| **Board type** | `K8LP_DVB_AJ` (LG K8LP SoC family, DVB tuner, Asia region — reported by ares-device -i, 2026-10-20) |
+| **OTA ID** | `HE_DTV_C22P_AFADATAA` (Hub Edition DTV, C22P platform — reported by ares-device -i) |
+| SSH pairing | Verified via `ares-device -i --device tv` returning real values. |
 
 ## What this version means — hard facts from the live research
 
