@@ -4,13 +4,19 @@
 
 | Field | Value |
 |---|---|
-| Brand | Digie (AR 50 model label) |
-| Serial | AR240701842A0884 |
-| webOS version | **webOS 22 / 7.5.8-28** |
-| Internal storage | 1.92 GB |
-| TV firmware / software build | 04.56.35 (reported 2026-10-20; this is the Digie model-specific build string, not the webOS release) |
-| Developer Mode | Already installed and working |
-| Underlying platform | LG webOS Hub (licensed to Digie, manufactured by Candid Automation, Ghaziabad) |
+| Device name on TV | "Gautam tv" |
+| Brand | Digie |
+| Model | **AR-50** |
+| Serial | AR24070…2A0884 (partially occluded by camera glare) |
+| webOS TV version | **webOS22 / 7.5.8-28** `[VERIFIED by photo]` |
+| TV firmware / software build | **04.56.35** (Digie model-specific build string) `[VERIFIED by photo]` |
+| Underlying platform | **webOS Hub** `[VERIFIED by photo]` — "webOS Hub" branding visible on Software Update screen |
+| Total internal storage | 1.92 GB |
+| Free internal storage at project start | **1.58 GB** (budget constraint for everything we install) |
+| Total power-on time | 2456 hours (TV is well-used, not new) |
+| Auto-update | **OFF** (verified by photo; toggle in left position) |
+| TV LAN IP (today) | **192.168.29.246** |
+| Developer Mode | Installed, Dev Mode Status ON, Key Server ON |
 
 ## What this version means — hard facts from the live research
 
