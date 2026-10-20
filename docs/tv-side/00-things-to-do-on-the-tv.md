@@ -2,6 +2,10 @@
 
 Order matters. Do them in this order.
 
+> **Status (2026-10-20): steps 1–4 are DONE** — auto-update OFF, firmware 7.5.8-28
+> confirmed, Dev Mode + Key Server ON, TV paired at 192.168.29.246. See
+> `docs/research/01-device-decision.md`. Step 5 is the open decision for L2.
+
 ## 1. Disable auto-update IMMEDIATELY (protect the root window)
 
 Why: LG is actively patching the exploits we need. If this TV auto-updates past

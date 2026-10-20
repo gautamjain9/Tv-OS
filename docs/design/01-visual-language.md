@@ -8,8 +8,12 @@ space, deliberate motion) and re-ground them in free / open equivalents.
 
 | Role | Font | Why |
 |---|---|---|
-| Primary UI | **Inter** (variable) | Free, Apple-adjacent proportions, excellent at 10-ft viewing distance |
-| Numbers/time | **Inter Display** or **JetBrains Mono** for monospace | Clear glyphs, no numeric ambiguity |
+| Primary UI | `'Inter'` first in the CSS stack, falling back to system sans | Apple-adjacent proportions at 10-ft |
+| Numbers/time | same stack | — |
+
+Note: Inter is **not bundled** — per `docs/plan/04-design-philosophy.md` we add no
+font downloads, so on the TV the stack falls back to whatever system/Sandstone font
+is present. Bundling a single Inter weight is a v0.2 decision, measured against IPK size.
 
 Sizes (based on 1920×1080 render; scale ×2 for 4K):
 - Hero title: 56 / 64 line-height / weight 700
@@ -20,19 +24,20 @@ Sizes (based on 1920×1080 render; scale ×2 for 4K):
 
 ## 2. Color tokens
 
-Dark-first (TVs are dark). All tokens live in `app/src/theme/tokens.ts`.
+Dark-first (TVs are dark). All tokens live in `app/src/theme/tokens.less`; values below mirror that file.
 
 ```
 bg.base         #0A0A0C   // the deep near-black (not pure black — avoids OLED crush)
-bg.elevated     #141418   // card / tile base
-bg.hover        #1E1E24   // tile at rest when focus is near
+bg.elevated     #1A1A20   // card / tile base
+bg.hover        #26262E   // tile at rest when focus is near
 bg.focus        rgba(255,255,255,0.08) // overlay added to focused tile
 fg.primary      #FFFFFF
 fg.secondary    rgba(255,255,255,0.72)
 fg.tertiary     rgba(255,255,255,0.48)
 accent          #7C9CFF   // cool periwinkle — distinct from Apple blue
-accent.glow     rgba(124,156,255,0.35)
-border.subtle   rgba(255,255,255,0.08)
+accent.glow     rgba(124,156,255,0.5)
+border.subtle   rgba(255,255,255,0.12)
+border.strong   rgba(255,255,255,0.24)
 ```
 
 ## 3. Focus system (TV-critical)
@@ -40,7 +45,7 @@ border.subtle   rgba(255,255,255,0.08)
 TVs are driven by a remote; the focused element is the single most important visual.
 - Focus ring: **4px solid white @ 90% opacity**, outside the tile edge, **12px offset**.
 - Behind the ring: a **soft glow** matching `accent.glow`, blurred 24px, scale 1.04.
-- Focused tile scales **1.06** over **200ms** with easing `cubic-bezier(0.2, 0.8, 0.2, 1)`.
+- Focused tile scales **1.06** over **180ms** with easing `cubic-bezier(0.2, 0.8, 0.2, 1)`.
 - Unfocused tiles stay at 1.0.
 - Enact's `@enact/sandstone` focus manager handles the plumbing; we only style.
 
@@ -48,8 +53,8 @@ TVs are driven by a remote; the focused element is the single most important vis
 
 | Interaction | Duration | Curve |
 |---|---|---|
-| Focus move | 200ms | cubic-bezier(0.2, 0.8, 0.2, 1) — "snappy out" |
-| Tile hover scale | 200ms | same |
+| Focus move | 180ms | cubic-bezier(0.2, 0.8, 0.2, 1) — "snappy out" |
+| Tile hover scale | 180ms | same |
 | View transition (page change) | 350ms | cubic-bezier(0.4, 0, 0.2, 1) — "material standard" |
 | Modal / dialog | 300ms | cubic-bezier(0.2, 0.8, 0.2, 1) |
 
@@ -61,10 +66,9 @@ Hub box, every animated property is a cost. Prefer `transform` + `opacity` only.
 Base canvas: 1920×1080 (scale directly for 4K via CSS zoom or Enact's resolution system).
 - 8px grid; everything a multiple of 8.
 - Side gutters: **80px** (feels wide at 10-ft).
-- Hero band height: 420px.
-- Tile grid: 5 columns @ 1920w → tile width (1920 - 160 - 4×32) / 5 = **326.4px**;
-  round to **320px**. Tile height **180px** (16:9).
-- Row gaps: 32px vertical, 32px horizontal.
+- No hero band (removed after the tv-detox comparison — see §6).
+- v0.1.x tiles were enlarged for 50"+ screens (see `tokens.less`): app tiles
+  **420×240px**, input tiles **280×160px**, gap **40px**.
 
 ## 6. The home screen (first pass)
 

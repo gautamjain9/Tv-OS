@@ -13,7 +13,7 @@ sweep of the whole project before anyone touches the TV.
 | 3 | Behavior bug | `app/src/components/Tile.js` | Manual `tabIndex={-1}` on the Spottable's root. Spottable manages tabIndex itself; forcing `-1` prevents remote-focus navigation. | FIXED: removed the manual tabIndex. |
 | 4 | Minor | `app/src/views/HomePanel.js` | Mixed import style — `Panel` deep-imported, `Header` from the Panels barrel. Risks resolution issues depending on Sandstone's exports map. | FIXED: `import {Header, Panel} from '@enact/sandstone/Panels'`. |
 | 5 | Privacy | `app/package.json` | `author` field embedded the user's full email in a now-PUBLIC repo. | FIXED: redacted to name only. (Note: existing git history still carries the commit email; separate concern, out of scope today.) |
-| 6 | Minor | `app/package.json` | Unused `main: "index.js"` (no such file at repo root). | FIXED: removed. |
+| 6 | Minor | `app/package.json` | Unused `main: "index.js"` (no such file at repo root). | FIXED: removed. **Later reverted** — Enact needs `main: "src/index.js"`; see `04-build-dry-run-cloud.md`. |
 | 7 | n/a (verified clean) | all `.js` files under `app/src/` | Dangling imports to missing files. | VERIFIED CLEAN: 7 `.js` files, 20 relative imports, 100% resolve. |
 | 8 | n/a (verified clean) | `app/package.json`, `app/webos-meta/appinfo.json` | Invalid JSON. | VERIFIED CLEAN: both files parse. |
 

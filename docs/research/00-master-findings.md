@@ -7,7 +7,7 @@ findings here so nothing has to be re-derived. Every factual claim is tagged:
 - `[UNVERIFIED]` — plausible but not yet confirmed; must be proven before we rely on it.
 - `[FALSE]` — a thing we initially assumed or a common myth that the research disproved.
 
-Last updated: 2026-10-20
+Last updated: 2026-10-20 (docs audit: on-TV readout folded in)
 
 ---
 
@@ -35,16 +35,17 @@ The user's TV is a **Digie-brand webOS TV**, not a genuine LG TV.
    lineage.** Nobody maintains compatibility data for it. `[UNVERIFIED]` whether any root
    tool works on it.
 3. **Developer Mode** (the officially supported, no-root path) depends on the TV having a
-   working LG Content Store + LG developer-account plumbing. On a third-party Hub TV this is
-   `[UNVERIFIED]` and is the FIRST thing we must test — it's the cheapest, safest experiment.
+   working LG Content Store + LG developer-account plumbing. `[VERIFIED]` working on this
+   Hub TV (2026-10-20, see below).
 
-### The exact unknowns we must resolve on the physical TV (cannot be answered from research)
-- `[UNVERIFIED]` Exact model number (e.g. DG4304 / DG5004 / DG5504).
-- `[UNVERIFIED]` webOS version shown under Settings > Support/About (format like "webOS 6.x"
-  or a Hub version string).
-- `[UNVERIFIED]` Is there an LG Content Store app on it? Does "Developer Mode" appear when
-  searched there?
-- `[UNVERIFIED]` RAM/storage of the specific unit.
+### On-TV readout — resolved 2026-10-20 (details + photos: `01-device-decision.md`)
+- `[VERIFIED]` Model **AR-50**; webOS **22 / 7.5.8-28**; firmware build **04.56.35**;
+  platform **webOS Hub**; board `K8LP_DVB_AJ`; OTA ID `HE_DTV_C22P_AFADATAA`.
+- `[VERIFIED]` Developer Mode app is available on this Hub TV and works: Dev Mode ON,
+  Key Server ON, `ares-device -i` pairing verified, Tv-OS IPK sideloaded and running.
+- `[VERIFIED]` Storage: 1.92 GB total, 1.58 GB free at project start.
+- `[UNVERIFIED]` RAM of this specific unit (other Digie models list 1 GB; not read off
+  this TV yet).
 
 ---
 
@@ -68,7 +69,7 @@ webosbrew community). Research framed strictly around that.
 
 - `[VERIFIED]` **RootMyTV** first-patched webOS versions by model year: 2018 → 4.4.2,
   2019 → 4.9.7, 2020 → 5.4.0, 2021 → 6.3.0. Never worked below webOS 3.4.0, nor on webOS
-  1/2/7(22)/8(23). v1 covered 3.4–6.0; v2 covered 4.x–6.2+. Unlikely to work on firmware
+  1/2/7(22)/8(23). → **Dead for this TV** (ships webOS 22); see `01-device-decision.md`. v1 covered 3.4–6.0; v2 covered 4.x–6.2+. Unlikely to work on firmware
   released since mid-2022.
 - `[VERIFIED]` **DejaVuln autoroot**: works on webOS 3.5+; not on 2016-or-earlier TVs; all
   release versions of webOS 9 ("webOS 24") are patched.
@@ -84,6 +85,7 @@ webosbrew community). Research framed strictly around that.
   compositor/launcher with something Apple-TV-fast. `[UNVERIFIED]` and fragile to try.
 - Biggest realistic wins from root: remove bloat, disable telemetry/ads, SSH access, run
   homebrew apps, set a custom startup app. Real but modest, and capped by 1GB RAM.
+- L2 research in progress: `docs/research/06-l2-*.md`, tooling under `l2/`.
 
 ---
 
@@ -98,8 +100,9 @@ webosbrew community). Research framed strictly around that.
 - `[VERIFIED]` Do NOT install LG's Developer Mode app on a ROOTED TV — it can break the system
   and force a factory reset. Pick ONE path (root OR dev-mode), not both.
 - webOS apps are essentially **web apps** (HTML/CSS/JS, often React/Enyo) packaged as `.ipk`.
-  A custom launcher-style "home" app is buildable this way. `[UNVERIFIED]` whether the Digie
-  Hub TV exposes the app-switching / startup-app hooks needed to make it feel like the home.
+  A custom launcher-style "home" app is buildable this way. `[VERIFIED]` (via community
+  sources, `02-l1-blockers-resolved.md`) that Dev Mode alone gives **no** boot persistence
+  or HOME takeover — that needs root (L2).
 
 ---
 
@@ -107,13 +110,14 @@ webosbrew community). Research framed strictly around that.
 
 - User chose: **"Modify the TV itself (webOS homebrew)."**
 - Orchestrator's honest assessment: hardware (1GB RAM) caps the ceiling hard; the third-party
-  Hub firmware makes root `[UNVERIFIED]`. **First gate = prove Developer Mode works on the
-  physical TV.** Everything else waits on that + the model/version readout.
+  Hub firmware makes root `[UNVERIFIED]`. First gate (Developer Mode on the physical TV) is
+  **passed**; L1 launcher is sideloaded and iterating (v0.1.x). L2 is now open.
 
 ### Open action items (need the physical TV / user input)
-- [ ] Read exact model number + webOS version off the TV (Settings > Support/About).
-- [ ] Check if LG Content Store exists and lists a "Developer Mode" app.
-- [ ] Confirm RAM/storage of the unit.
+- [x] Read exact model number + webOS version off the TV — AR-50, webOS 22 / 7.5.8-28.
+- [x] Check if LG Content Store exists and lists a "Developer Mode" app — yes, working.
+- [x] Confirm storage of the unit — 1.92 GB total / 1.58 GB free.
+- [ ] Confirm RAM of the unit.
 
 ---
 

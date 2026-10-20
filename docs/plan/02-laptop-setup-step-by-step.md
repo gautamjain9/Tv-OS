@@ -166,10 +166,10 @@ cd dist
 ares-package .
 ```
 
-The `.` is important — it means "the current folder."  Output: a file named something like `com.tvos.launcher_0.1.0_all.ipk` in the `dist` folder.
+The `.` is important — it means "the current folder."  Output: a file named something like `com.tvos.launcher_0.1.3_all.ipk` in the `dist` folder (the number is the app version, so it changes as we ship updates).
 
 ```bash
-ares-install -d tv ./com.tvos.launcher_0.1.0_all.ipk
+ares-install -d tv ./com.tvos.launcher_*_all.ipk
 ```
 
 Should print "Success". The app is now on your TV.

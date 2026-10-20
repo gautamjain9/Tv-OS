@@ -64,7 +64,7 @@ errors — most common cause is wrong IP (TV moved networks) or Dev Mode session
 ## Step 3 — Clone this repo on the laptop and install
 
 ```bash
-git clone <this-repo-URL>
+git clone https://github.com/gautamjain9/Tv-OS.git
 cd Tv-OS
 git checkout research/phase-0-feasibility  # or whatever branch is current
 cd app
@@ -87,12 +87,13 @@ cd dist
 ares-package .
 ```
 
-Output: `com.tvos.launcher_0.1.0_all.ipk` in the current directory.
+Output: `com.tvos.launcher_<version>_all.ipk` in the current directory, where `<version>`
+is the `version` field of `webos-meta/appinfo.json` (currently `0.1.3`).
 
 ## Step 5 — Install on the TV
 
 ```bash
-ares-install -d tv ./com.tvos.launcher_0.1.0_all.ipk
+ares-install -d tv ./com.tvos.launcher_*_all.ipk
 ```
 
 Should print "Success". The app appears in the TV's app list (recent apps / all apps).

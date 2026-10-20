@@ -10,9 +10,11 @@ Digie / LG webOS Hub TVs.
 ## Current status
 
 - **Phase 0 (research):** complete. See `docs/research/`.
-- **Phase 1 (L1 — no-root launcher):** scaffolded. App skeleton under `app/`.
-  Blocked on TV-side readout (see `docs/tv-side/00-things-to-do-on-the-tv.md`).
-- **Phase 2 (L2 — root, debloat, HOME takeover):** deferred. Research task open.
+- **Phase 1 (L1 — no-root launcher):** sideloaded on the TV via Developer Mode and
+  iterating (v0.1.x, currently 0.1.3). TV readout done — see
+  `docs/research/01-device-decision.md`.
+- **Phase 2 (L2 — root, debloat, HOME takeover):** in progress. Research in
+  `docs/research/06-l2-*.md`, tooling under `l2/`.
 - **Phase 3 (L3 — Raspberry Pi 5 universal box):** not started.
 
 ## Repo layout
@@ -31,11 +33,17 @@ Tv-OS/
 └── docs/
     ├── plan/
     │   ├── 00-project-plan.md                Three-layer plan + orchestration rules.
-    │   └── 01-sideload-guide.md              Exact laptop ↔ TV workflow.
+    │   ├── 01-sideload-guide.md              Exact laptop ↔ TV workflow.
+    │   ├── 02-laptop-setup-step-by-step.md   Beginner version of the sideload guide.
+    │   ├── 03-recovery-after-audit-fix.md    Undo a bad `npm audit fix --force`.
+    │   └── 04-design-philosophy.md           The one rule: debloat, don't fill space.
     ├── research/
     │   ├── 00-master-findings.md             Single source of truth. Every claim tagged.
     │   ├── 01-device-decision.md             Readout of the user's TV; path decision.
-    │   └── 02-l1-blockers-resolved.md        L1 unknowns, resolved.
+    │   ├── 02-l1-blockers-resolved.md        L1 unknowns, resolved.
+    │   ├── 03-pre-sideload-audit.md          Zero-trust sweep before first install.
+    │   ├── 04-build-dry-run-cloud.md         Full build verified in a container.
+    │   └── 05-tv-detox-comparison.md         What we take from Ansub/tv-detox.
     ├── design/
     │   └── 01-visual-language.md             Visual + motion system (tokens live in app/).
     └── tv-side/

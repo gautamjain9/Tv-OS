@@ -50,9 +50,10 @@ rendering over HDMI. Any TV, any brand, becomes a "dumb display." This is where 
 
 ## Research still owed (before coding starts)
 
-- [ ] Can a sideloaded webOS app be set as the home/startup screen without root?
-- [ ] Which webOS 7.x APIs are exposed to third-party apps (app launching, settings deep links,
-  network status, HDMI input switching)?
+- [x] Can a sideloaded webOS app be set as the home/startup screen without root? — **No**;
+  needs root. See `docs/research/02-l1-blockers-resolved.md`.
+- [x] Which webOS 7.x APIs are exposed to third-party apps (app launching, settings deep links,
+  network status, HDMI input switching)? — see `02-l1-blockers-resolved.md`.
 - [ ] Does the Digie Hub build strip any LG-standard APIs?
 - [ ] faultmanager-autoroot current status: latest release, known failures on third-party
   Hub firmware, exact prerequisites.
@@ -70,7 +71,7 @@ rendering over HDMI. Any TV, any brand, becomes a "dumb display." This is where 
    work in the repo on the laptop/cloud.
 6. **Everything is committed to the branch** so you can pull on either device.
 
-## Immediate next steps (today)
+## Immediate next steps (as of plan creation — superseded; see README "Current status")
 
 1. **You:** follow `docs/tv-side/00-things-to-do-on-the-tv.md` — disable auto-update, confirm
    firmware, get TV IP, report back.

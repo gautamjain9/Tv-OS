@@ -18,9 +18,9 @@ git reset --hard origin/research/phase-0-feasibility
 # 2. Delete the polluted dependency tree.
 rm -rf node_modules package-lock.json
 
-# 3. Reinstall. The project's .npmrc now sets ignore-scripts=false, so the
-#    @webos-tools/cli postinstall + native deps (ssh2, cpu-features, fsevents)
-#    build correctly without any "approve" dance.
+# 3. Reinstall. The project's .npmrc sets ignore-scripts=false plus an
+#    allow-scripts list, so the @webos-tools/cli postinstall + native deps
+#    (ssh2, cpu-features, fsevents) build without any "approve" dance.
 npm install
 
 # 4. Make sure the global ares tool is on your PATH (one-time, if you did
@@ -33,9 +33,10 @@ If `ares -V` still fails after step 4:
 
 ```bash
 # macOS/Linux: find where npm puts global binaries
-npm bin -g
+# (`npm bin -g` was removed in npm 9; use the prefix instead)
+echo "$(npm prefix -g)/bin"
 # add that directory to PATH in ~/.zshrc (macOS default) or ~/.bashrc:
-echo 'export PATH="$(npm bin -g):$PATH"' >> ~/.zshrc
+echo 'export PATH="$(npm prefix -g)/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
