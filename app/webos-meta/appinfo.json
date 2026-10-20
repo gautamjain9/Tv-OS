@@ -10,5 +10,6 @@
   "iconColor": "red",
   "resolution": "1920x1080",
   "requiredMemory": 128,
-  "disableBackHistoryAPI": true
+  "disableBackHistoryAPI": true,
+  "requiredACG": ["application.launcher"]
 }
