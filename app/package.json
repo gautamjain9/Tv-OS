@@ -4,8 +4,7 @@
   "description": "Tv-OS — custom launcher for webOS 22 (Digie / LG Hub). Apple-TV-inspired, Enact-based.",
   "private": true,
   "license": "MIT",
-  "author": "Gautam Jain <jaingautam0903@gmail.com>",
-  "main": "index.js",
+  "author": "Gautam Jain",
   "scripts": {
     "serve": "enact serve",
     "pack": "enact pack",

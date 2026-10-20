@@ -1,10 +1,14 @@
-import kind from '@enact/core/kind';
 import {useEffect, useState} from 'react';
 import css from './TopBar.module.less';
 
 /**
- * Shows the clock + a thin status strip. Clock updates every 15s;
- * on this low-RAM hardware we deliberately avoid per-second re-renders.
+ * TopBar is intentionally a plain function component (not Enact's `kind`),
+ * because it holds state through React hooks. `kind` targets stateless
+ * components; mixing hooks inside its `render` is unsupported in Enact 4.x
+ * and silently breaks hook identity across re-renders on some targets.
+ *
+ * The clock updates every 15 s — we deliberately avoid per-second re-renders
+ * on this low-RAM Hub box.
  */
 const useClock = () => {
 	const [now, setNow] = useState(() => new Date());
@@ -22,17 +26,13 @@ const format = (d) => {
 	return `${hh}:${mm}  ·  ${day}`;
 };
 
-const TopBar = kind({
-	name: 'TopBar',
-	styles: {css, className: 'topBar'},
-	render: (props) => {
-		const now = useClock();
-		return (
-			<div {...props}>
-				<span className={css.time}>{format(now)}</span>
-			</div>
-		);
-	}
-});
+const TopBar = (props) => {
+	const now = useClock();
+	return (
+		<div {...props} className={css.topBar}>
+			<span className={css.time}>{format(now)}</span>
+		</div>
+	);
+};
 
 export default TopBar;

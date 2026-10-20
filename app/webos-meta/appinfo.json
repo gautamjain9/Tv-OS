@@ -8,7 +8,6 @@
   "icon": "icon.png",
   "largeIcon": "icon-large.png",
   "iconColor": "red",
-  "splashBackground": "splash.png",
   "resolution": "1920x1080",
   "requiredMemory": 128,
   "disableBackHistoryAPI": true

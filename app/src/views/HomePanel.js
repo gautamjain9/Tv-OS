@@ -1,6 +1,5 @@
 import kind from '@enact/core/kind';
-import Panel from '@enact/sandstone/Panels/Panel';
-import {Header} from '@enact/sandstone/Panels';
+import {Header, Panel} from '@enact/sandstone/Panels';
 import PropTypes from 'prop-types';
 import AppsRow from '../components/AppsRow';
 import InputsRow from '../components/InputsRow';
