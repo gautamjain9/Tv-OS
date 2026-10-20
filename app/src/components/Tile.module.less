@@ -12,25 +12,36 @@
 	cursor: pointer;
 	position: relative;
 	outline: none;
-	transition:
-		transform @dur-focus @ease-snap,
-		box-shadow @dur-focus @ease-snap,
-		background @dur-focus @ease-snap,
-		border-color @dur-focus @ease-snap;
+	transition: transform @dur-focus @ease-snap;
 
-	// Belt + suspenders: react to BOTH the native browser :focus pseudo-class
-	// AND Spottable's .spottable-focused class. Whichever ends up on the
-	// element will trigger the focused styles. On webOS Chromium both the
-	// DOM focus and Spottable's class should land on the same node.
-	&:focus,
-	&:global(.spottable-focused) {
-		transform: scale(1.06);
-		background: @bg-hover;
-		border-color: @border-strong;
+	// Focus ring + glow live on a pseudo-element whose OPACITY animates, so
+	// a focus move only animates transform + opacity (compositor-only) —
+	// never box-shadow/background repaints on the low-end SoC.
+	&::after {
+		content: '';
+		position: absolute;
+		// No `inset` shorthand — webOS 22 ships Chromium 87.
+		top: -1px;
+		right: -1px;
+		bottom: -1px;
+		left: -1px;
+		border-radius: inherit;
 		box-shadow:
 			0 0 0 6px rgba(255, 255, 255, 0.95),
 			0 0 48px 12px @accent-glow;
+		opacity: 0;
+		transition: opacity @dur-focus @ease-snap;
+		pointer-events: none;
+	}
+
+	// Spotlight moves real DOM focus, so native :focus is the hook.
+	&:focus {
+		transform: scale(1.06);
 		z-index: 1;
+
+		&::after {
+			opacity: 1;
+		}
 	}
 
 	// Input tiles are smaller.

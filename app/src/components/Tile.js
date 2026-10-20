@@ -1,4 +1,4 @@
-import {forwardRef} from 'react';
+import {forwardRef, useCallback} from 'react';
 import Spottable from '@enact/spotlight/Spottable';
 import PropTypes from 'prop-types';
 import {launchApp} from '../services/webosBridge';
@@ -10,41 +10,55 @@ import css from './Tile.module.less';
  * fighting with kind's internal styles handling.
  *
  * Spottable injects:
- *   className: '<ours> spottable [spottable-focused when focused]'
- *   onKeyDown/Up, onFocus/Blur, tabIndex=0
+ *   className: '<ours> spottable'
+ *   onKeyDown/Up, onFocus/Blur, tabIndex=-1
  *   ref forwarded to the DOM element
  *
- * We MUST forward className composed and spread the rest.
+ * Focus styling hooks the native :focus pseudo-class — Spotlight moves
+ * real DOM focus. (Enact 4.x has no `.spottable-focused` class.)
  */
 // eslint-disable-next-line react/display-name
-const TileBase = forwardRef(({appId, label, variant = 'app', className, ...rest}, ref) => {
-	const handleClick = () => launchApp(appId);
-	// Spottable also sends keyboard events; onClick is enough because
-	// Spottable synthesises a click from OK/Enter via emulateMouse: true.
-	return (
-		<div
-			ref={ref}
-			{...rest}
-			className={[css.tile, className].filter(Boolean).join(' ')}
-			data-variant={variant}
-			onClick={handleClick}
-		>
-			<div className={css.inner}>
-				<div className={css.label}>{label}</div>
-			</div>
+const TileBase = forwardRef(({label, variant = 'app', className, ...rest}, ref) => (
+	<div
+		ref={ref}
+		{...rest}
+		className={[css.tile, className].filter(Boolean).join(' ')}
+		data-variant={variant}
+	>
+		<div className={css.inner}>
+			<div className={css.label}>{label}</div>
 		</div>
-	);
-});
+	</div>
+));
 
 TileBase.propTypes = {
-	appId: PropTypes.string.isRequired,
 	label: PropTypes.string.isRequired,
 	variant: PropTypes.oneOf(['app', 'input']),
 	className: PropTypes.string
 };
 
-// Spottable adds spatial-nav focus; it manages .spottable + .spottable-focused
-// classes our stylesheet hooks, and relays OK/Enter as click.
-const Tile = Spottable(TileBase);
+const SpottableTile = Spottable(TileBase);
+
+/**
+ * onClick MUST be passed to Spottable itself: on OK/Enter key-up Spottable
+ * calls its own `onClick` prop (emulateMouse). A div gets no native click
+ * from Enter, so a handler set inside TileBase only fired for pointer clicks.
+ */
+const Tile = ({appId, ...rest}) => {
+	const handleClick = useCallback(() => {
+		launchApp(appId).catch((err) => {
+			// eslint-disable-next-line no-console
+			console.warn(`[Tile] launch ${appId} failed`, err);
+		});
+	}, [appId]);
+
+	return <SpottableTile {...rest} onClick={handleClick} />;
+};
+
+Tile.propTypes = {
+	appId: PropTypes.string.isRequired,
+	label: PropTypes.string.isRequired,
+	variant: PropTypes.oneOf(['app', 'input'])
+};
 
 export default Tile;

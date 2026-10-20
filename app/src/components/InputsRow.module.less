@@ -17,6 +17,9 @@
 	display: flex;
 	gap: @tile-gap;
 	overflow-x: auto;
-	padding-bottom: 8px;
+	// overflow-x clips both axes; pad (and pull back) so the focus scale +
+	// glow on a tile isn't cut off.
+	padding: @tile-focus-bleed;
+	margin: -@tile-focus-bleed;
 	&::-webkit-scrollbar { display: none; }
 }
