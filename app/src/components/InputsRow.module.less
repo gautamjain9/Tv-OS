@@ -1,0 +1,21 @@
+@import '../theme/tokens.less';
+
+.inputsRow {
+	margin-top: 40px;
+}
+
+.sectionTitle {
+	font-size: 32px;
+	font-weight: 600;
+	line-height: 40px;
+	color: @fg-primary;
+	margin: 0 0 24px;
+}
+
+.scroller {
+	display: flex;
+	gap: @tile-gap;
+	overflow-x: auto;
+	padding-bottom: 8px;
+	&::-webkit-scrollbar { display: none; }
+}

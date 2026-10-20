@@ -1,0 +1,41 @@
+@import '../theme/tokens.less';
+
+.tile {
+	flex: 0 0 @tile-w;
+	width: @tile-w;
+	height: @tile-h;
+	border-radius: 16px;
+	background: @bg-elevated;
+	border: 1px solid @border-subtle;
+	display: flex;
+	align-items: flex-end;
+	cursor: pointer;
+	transition: transform @dur-focus @ease-snap,
+	            box-shadow @dur-focus @ease-snap,
+	            background @dur-focus @ease-snap;
+	// Enact adds .spottable + .spottable-focused classes; we hook .spottable-focused.
+	&:global(.spottable-focused) {
+		transform: scale(1.06);
+		background: @bg-hover;
+		box-shadow: 0 0 0 4px rgba(255,255,255,0.9),
+		            0 0 48px 8px @accent-glow;
+	}
+	// Input tiles are a touch smaller + different accent.
+	&[data-variant='input'] {
+		height: 120px;
+		flex: 0 0 220px;
+		width: 220px;
+	}
+}
+
+.inner {
+	width: 100%;
+	padding: 20px 24px;
+}
+
+.label {
+	font-size: 22px;
+	font-weight: 500;
+	line-height: 28px;
+	color: @fg-primary;
+}

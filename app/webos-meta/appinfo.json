@@ -1,0 +1,15 @@
+{
+  "id": "com.tvos.launcher",
+  "version": "0.1.0",
+  "vendor": "Tv-OS",
+  "type": "web",
+  "main": "index.html",
+  "title": "Tv-OS",
+  "icon": "icon.png",
+  "largeIcon": "icon-large.png",
+  "iconColor": "red",
+  "splashBackground": "splash.png",
+  "resolution": "1920x1080",
+  "requiredMemory": 128,
+  "disableBackHistoryAPI": true
+}

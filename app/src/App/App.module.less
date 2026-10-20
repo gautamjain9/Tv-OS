@@ -1,0 +1,14 @@
+// Tv-OS top-level app styles. Design tokens live in theme/tokens.less and are imported here.
+@import '../theme/tokens.less';
+
+.app {
+	background: @bg-base;
+	color: @fg-primary;
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	// Lock to the fixed 1920x1080 base; Enact's resolution system handles scaling.
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}

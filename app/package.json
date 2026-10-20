@@ -1,0 +1,40 @@
+{
+  "name": "tv-os-launcher",
+  "version": "0.1.0",
+  "description": "Tv-OS — custom launcher for webOS 22 (Digie / LG Hub). Apple-TV-inspired, Enact-based.",
+  "private": true,
+  "license": "MIT",
+  "author": "Gautam Jain <jaingautam0903@gmail.com>",
+  "main": "index.js",
+  "scripts": {
+    "serve": "enact serve",
+    "pack": "enact pack",
+    "pack-p": "enact pack -p",
+    "clean": "enact clean",
+    "lint": "enact lint",
+    "test": "enact test",
+    "package-webos": "enact pack -p && cd dist && ares-package .",
+    "install-webos": "ares-install -d tv ./dist/*.ipk",
+    "launch-webos": "ares-launch -d tv com.tvos.launcher"
+  },
+  "dependencies": {
+    "@enact/core": "^4.0.9",
+    "@enact/i18n": "^4.0.9",
+    "@enact/sandstone": "^2.0.5",
+    "@enact/spotlight": "^4.0.9",
+    "@enact/ui": "^4.0.9",
+    "@enact/webos": "^4.0.9",
+    "classnames": "^2.3.2",
+    "ilib": "^14.21.1",
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@enact/cli": "^6.1.4",
+    "@webos-tools/cli": "^3.0.0"
+  },
+  "enact": {
+    "theme": "sandstone"
+  }
+}
