@@ -1,8 +1,6 @@
 @import '../theme/tokens.less';
 
 .homePanel {
-	// Full-bleed dark background; content vertically centered-ish with
-	// more top padding than before so the layout breathes on a 50"+ screen.
 	width: 100vw;
 	min-height: 100vh;
 	padding: 120px 120px 80px;
@@ -11,4 +9,20 @@
 	display: flex;
 	flex-direction: column;
 	gap: 56px;
+	position: relative;
+}
+
+.debug {
+	position: fixed;
+	left: 24px;
+	bottom: 24px;
+	font-size: 18px;
+	font-family: monospace;
+	color: rgba(255, 255, 255, 0.6);
+	background: rgba(0, 0, 0, 0.5);
+	padding: 8px 12px;
+	border-radius: 6px;
+	max-width: 90vw;
+	overflow: hidden;
+	white-space: nowrap;
 }

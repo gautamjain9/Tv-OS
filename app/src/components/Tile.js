@@ -1,49 +1,50 @@
-import kind from '@enact/core/kind';
+import {forwardRef} from 'react';
 import Spottable from '@enact/spotlight/Spottable';
 import PropTypes from 'prop-types';
 import {launchApp} from '../services/webosBridge';
 import css from './Tile.module.less';
 
 /**
- * A focusable tile. Pressing OK/Enter on a focused tile fires onClick
- * (Enact's Spottable synthesises a click from the OK key), which asks the
- * applicationManager LS2 service to launch the target app by ID.
+ * TileBase is a plain forwardRef component — NOT Enact's `kind()` — so
+ * Spottable's HOC can compose className + event handlers + ref without
+ * fighting with kind's internal styles handling.
  *
- * Note: Spottable sets tabIndex itself. We do NOT set tabIndex here — a
- * manual value interferes with the spatial-nav focus manager.
+ * Spottable injects:
+ *   className: '<ours> spottable [spottable-focused when focused]'
+ *   onKeyDown/Up, onFocus/Blur, tabIndex=0
+ *   ref forwarded to the DOM element
+ *
+ * We MUST forward className composed and spread the rest.
  */
-const TileBase = kind({
-	name: 'Tile',
-
-	propTypes: {
-		appId: PropTypes.string.isRequired,
-		label: PropTypes.string.isRequired,
-		variant: PropTypes.oneOf(['app', 'input'])
-	},
-
-	defaultProps: {
-		variant: 'app'
-	},
-
-	styles: {css, className: 'tile'},
-
-	handlers: {
-		onClick: (ev, {appId}) => {
-			launchApp(appId);
-		}
-	},
-
-	render: ({label, variant, ...rest}) => (
-		<div {...rest} data-variant={variant}>
+// eslint-disable-next-line react/display-name
+const TileBase = forwardRef(({appId, label, variant = 'app', className, ...rest}, ref) => {
+	const handleClick = () => launchApp(appId);
+	// Spottable also sends keyboard events; onClick is enough because
+	// Spottable synthesises a click from OK/Enter via emulateMouse: true.
+	return (
+		<div
+			ref={ref}
+			{...rest}
+			className={[css.tile, className].filter(Boolean).join(' ')}
+			data-variant={variant}
+			onClick={handleClick}
+		>
 			<div className={css.inner}>
 				<div className={css.label}>{label}</div>
 			</div>
 		</div>
-	)
+	);
 });
 
-// Spottable adds spatial-nav focus; it manages its own tabIndex + the
-// .spottable / .spottable-focused classes our stylesheet hooks.
+TileBase.propTypes = {
+	appId: PropTypes.string.isRequired,
+	label: PropTypes.string.isRequired,
+	variant: PropTypes.oneOf(['app', 'input']),
+	className: PropTypes.string
+};
+
+// Spottable adds spatial-nav focus; it manages .spottable + .spottable-focused
+// classes our stylesheet hooks, and relays OK/Enter as click.
 const Tile = Spottable(TileBase);
 
 export default Tile;

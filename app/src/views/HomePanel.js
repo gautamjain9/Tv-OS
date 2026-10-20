@@ -1,14 +1,10 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import Spotlight from '@enact/spotlight';
 import AppsRow from '../components/AppsRow';
 import InputsRow from '../components/InputsRow';
 import TopBar from '../components/TopBar';
 import css from './HomePanel.module.less';
 
-// Pre-registered apps. On a non-root webOS, we cannot discover installed
-// apps, so the user curates this list. App IDs verified against genuine LG
-// webOS; Digie Hub IDs confirmed on-device case-by-case (silent-failure to
-// launch = wrong ID, swap it).
 const APPS = [
 	{id: 'youtube.leanback.v4', label: 'YouTube'},
 	{id: 'netflix', label: 'Netflix'},
@@ -24,21 +20,26 @@ const INPUTS = [
 ];
 
 /**
- * HomePanel is the single screen of v0.1. Plain function component so we
- * can set initial Spotlight focus on mount — otherwise focus defaults to
- * the first Spottable in the DOM (any ancestor chrome) and arrow keys
- * never reach our tiles.
- *
- * The setTimeout(..., 100) gap is deliberate: Spotlight's container
- * registration runs on the first render tick; focusing before that
- * sometimes no-ops because the targets aren't registered yet.
+ * HomePanel is the single screen. We set initial Spotlight focus on mount
+ * and surface a visible debug line (bottom-left) so we can SEE on the TV
+ * whether Spotlight thinks the DOM has focusable tiles yet. This debug
+ * line gets removed once focus is proven working.
  */
 const HomePanel = () => {
+	const [debug, setDebug] = useState('mounted');
+
 	useEffect(() => {
 		const t = setTimeout(() => {
-			// Pass no args → Spotlight picks the first known spottable.
-			Spotlight.focus();
-		}, 100);
+			const spottables = document.querySelectorAll('.spottable');
+			const info = `spottable count: ${spottables.length}  ·  focused: ${Spotlight.getCurrent()?.className || 'none'}`;
+			setDebug(info);
+			if (spottables.length > 0) {
+				Spotlight.focus(spottables[0]);
+				setTimeout(() => {
+					setDebug(info + `  ·  after-focus: ${Spotlight.getCurrent()?.className || 'none'}`);
+				}, 100);
+			}
+		}, 250);
 		return () => clearTimeout(t);
 	}, []);
 
@@ -47,6 +48,7 @@ const HomePanel = () => {
 			<TopBar />
 			<AppsRow items={APPS} />
 			<InputsRow items={INPUTS} />
+			<div className={css.debug}>{debug}</div>
 		</div>
 	);
 };
