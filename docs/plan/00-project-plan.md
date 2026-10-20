@@ -18,7 +18,14 @@ Apple-TV-quality UI. Make it universal across TVs where possible.
 Build a webOS app (web tech: HTML/CSS/JS, likely React or vanilla + CSS animations).
 Sideload via official Developer Mode. Set as startup/home-replacement where possible.
 
-**Deliverables:**
+*Status 2026-10-20:* v0.1 used Enact (React) + Sandstone and was abandoned; v0.2 is
+vanilla HTML/CSS/JS (v0.2.1 awaiting first install). See
+`docs/research/06-enact-postmortem.md` and `docs/HANDOFF.md`. Startup/home replacement
+needs root (L2) — see below.
+
+**Deliverables** (original plan; the feature list was later pruned to clock + apps row +
+inputs row by `04-design-philosophy.md` and the tv-detox comparison — no hero, no weather,
+no settings icons, no parallax, no bundled Inter):
 - A working `.ipk` installable on the TV via `ares-install`.
 - A home screen app that shows: apps grid, now-playing hero, time/weather, settings quick-access.
 - "Apple-TV-inspired" means: generous spacing, large focus-ring, parallax on tile hover,
@@ -59,6 +66,8 @@ rendering over HDMI. Any TV, any brand, becomes a "dumb display." This is where 
   Hub firmware, exact prerequisites.
 - [ ] Backup/recovery options: can we dump the TV's current firmware before rooting?
 
+(L2 items above: research in progress in `docs/research/07-l2-boot-takeover.md`.)
+
 ## Orchestration rules (how we work)
 
 1. **Master research doc** = `docs/research/00-master-findings.md` — single source of truth,
@@ -71,7 +80,7 @@ rendering over HDMI. Any TV, any brand, becomes a "dumb display." This is where 
    work in the repo on the laptop/cloud.
 6. **Everything is committed to the branch** so you can pull on either device.
 
-## Immediate next steps (as of plan creation — superseded; see README "Current status")
+## Immediate next steps (as of plan creation — superseded; see `docs/HANDOFF.md`)
 
 1. **You:** follow `docs/tv-side/00-things-to-do-on-the-tv.md` — disable auto-update, confirm
    firmware, get TV IP, report back.

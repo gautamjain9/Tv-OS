@@ -13,15 +13,15 @@ Everything else is a style choice.
 
 | Dimension | We do | We don't do |
 |---|---|---|
-| **IPK size** | Smallest IPK that still looks right. Current: 14.9 MB. Target for v0.2: under 5 MB after locale pruning. | Ship 83 MB of ilib locales when the TV runs in one language. |
-| **RAM footprint** | `requiredMemory: 128` MB declared. In practice we target closer to the Enact minimum (~60 MB resident). | Add parallax layers, blurred backgrounds, autoplay previews — all the design flourishes that eat frames on a 1 GB TV. |
-| **Fonts** | Use the Sandstone-provided fonts already in the bundle (Miso, MuseoSans). | Add Google-Fonts imports, variable fonts, fallback stacks the TV won't preload. |
+| **IPK size** | Smallest IPK that still looks right. Current (v0.2, vanilla): ~5 KB (5.3 KB for v0.2.0). v0.1 (Enact, abandoned) was 14.9 MB; its v0.2 target had been "under 5 MB after locale pruning" — dropping Enact beat that by ~1000×. | Ship 83 MB of ilib locales when the TV runs in one language (what v0.1 did). |
+| **RAM footprint** | `requiredMemory: 64` MB declared in v0.2 (v0.1 declared 128 and aimed at the Enact minimum, ~60 MB resident). Real resident memory not yet measured. | Add parallax layers, blurred backgrounds, autoplay previews — all the design flourishes that eat frames on a 1 GB TV. |
+| **Fonts** | v0.2: system fonts only — the `font-family` stack in `app/src/styles.css` (webOS system font first); no font files bundled. v0.1 (Enact, abandoned) used the Sandstone fonts (Miso, MuseoSans). | Add Google-Fonts imports, variable fonts, fallback stacks the TV won't preload. |
 | **Startup time** | Boot the home screen in under 2 s from app launch. Measure. | Eagerly import every tile, every modal, every settings panel at startup. Lazy-load. |
 | **Scroll / focus** | 60 fps steady on tile focus moves. `transform` + `opacity` only. | Animate `width`, `height`, `box-shadow` as if it's a desktop app. |
 | **Network** | Zero network at startup. The home screen renders fully offline. | Fetch weather, images, remote config, analytics on launch. |
 | **Tracking / telemetry** | None. Ever. | "Just a tiny anonymous metric" — no. |
-| **Features in v0.1** | Clock, apps row, inputs row. Full stop. | Weather widget, music player, voice assistant, smart-home dashboard, screensaver. All tempting; all later. |
-| **Permissions** | Ask only for the ACGs we actually use. (`application.launcher` for v0.1.) | Request the full Luna bus "just in case." |
+| **Features in v0.1 / v0.2** | Clock, apps row, inputs row. Full stop. | Weather widget, music player, voice assistant, smart-home dashboard, screensaver. All tempting; all later. |
+| **Permissions** | Ask only for the ACGs we actually use. (`application.launcher`, v0.1 and v0.2.) | Request the full Luna bus "just in case." |
 
 ## The design-system corollary
 
@@ -38,7 +38,12 @@ already locked in:
 - No full-page transitions with multi-layer motion — one view-change at a
   time, 350 ms, single curve.
 
-## Where this fights our choice of Enact / Sandstone
+## Where this fought our choice of Enact / Sandstone (v0.1 — superseded)
+
+*Kept as the record of the v0.1 bet. Outcome, 2026-10-20: we left Enact for v0.2, but
+not for the reason this bet named. Focus never worked on the TV across the v0.1
+installs, and the 14.9 MB build was the opposite of this rule. Frame rate was never
+measured. See `docs/research/06-enact-postmortem.md`.*
 
 **Honest tradeoff:** Enact + Sandstone gives us for free:
 - Spatial-navigation focus (`Spottable`, `SpotlightRootDecorator`)
@@ -58,8 +63,8 @@ pre-migrate.
 ## What this does NOT change in the plan
 
 The three-layer plan still stands:
-- **L1 (right now):** Enact launcher sideloaded via Dev Mode. Narrow by
-  design: tiles, time, inputs.
+- **L1 (right now):** vanilla HTML/CSS/JS launcher (v0.2.1) sideloaded via Dev
+  Mode. Narrow by design: tiles, time, inputs. (v0.1 was Enact; abandoned.)
 - **L2 (later):** Root + Homebrew Channel + boot-takeover of HOME button
   + system debloat (remove LG ads, telemetry, promotional launchers).
   This is where "debloat" grows from "our app is small" to "the whole TV
@@ -83,4 +88,5 @@ applies to webOS 22 on Digie Hub, but Hub-specific behavior is
   — compare 1.58 GB free before and after install).
 
 Numbers go in a dedicated `docs/research/NN-l1-measurements.md` (next free number;
-`05` is taken by the tv-detox comparison). Not yet written.
+`05`–`07` are taken: tv-detox comparison, Enact postmortem, L2 boot-takeover research —
+so probably `08`). Not yet written; nothing has been measured on the TV yet.

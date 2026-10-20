@@ -1,6 +1,6 @@
 {
   "id": "com.tvos.launcher",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "vendor": "Tv-OS",
   "type": "web",
   "main": "index.html",

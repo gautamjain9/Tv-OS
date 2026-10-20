@@ -5,6 +5,12 @@ Order matters. Do them in this order.
 > **Status (2026-10-20): steps 1–4 are DONE** — auto-update OFF, firmware 7.5.8-28
 > confirmed, Dev Mode + Key Server ON, TV paired at 192.168.29.246. See
 > `docs/research/01-device-decision.md`. Step 5 is the open decision for L2.
+>
+> **Before each install:** the TV did not answer at 192.168.29.246 at the last check
+> (it was probably off, or the router gave it a new address). Turn the TV on, open the
+> Developer Mode app, and check two things: Dev Mode Status is still ON (press **Extend**
+> if the remaining session time is low), and the IP address shown. If the IP is
+> different, tell the laptop session — the fix is one command, in `docs/HANDOFF.md` §5.
 
 ## 1. Disable auto-update IMMEDIATELY (protect the root window)
 

@@ -1,6 +1,6 @@
 {
   "name": "tv-os-launcher",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Tv-OS — vanilla-JS launcher for webOS. Zero frameworks, zero bundlers.",
   "private": true,
   "license": "MIT",

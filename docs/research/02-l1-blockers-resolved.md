@@ -33,6 +33,12 @@ Research done 2026-10-20. All claims tagged.
     parameters: { id: "youtube.leanback.v4" }
   });
   ```
+  **Caveat added 2026-10-20:** `[VERIFIED]` this example only works when LG's `webOSTV.js`
+  library is loaded — it is what defines `window.webOS.service`. Tv-OS loads no such
+  library, so v0.1 and v0.2.0 (which both used this call) would have launched nothing.
+  v0.2.1 calls the native `WebOSServiceBridge` / `PalmServiceBridge` directly. See
+  `06-enact-postmortem.md` → "Later source audit". `[UNVERIFIED]` on this TV until v0.2.1
+  is installed.
 - `[VERIFIED]` Can open specific Settings screens via `com.palm.app.settings` with a
   `target` parameter (`picture`, `sound`, `network`, …) — older community source, needs
   re-verification on webOS 22.
@@ -49,8 +55,13 @@ Research done 2026-10-20. All claims tagged.
 - `[VERIFIED]` LG's official mapping: **webOS TV 22 → Enact 4.0.9 + Sandstone 2.0.5.**
 - `[VERIFIED]` Enact is built on React; it's LG's official TV UI framework; has
   built-in spatial-navigation focus management (critical for remote-control UIs).
-- Decision: **use Enact 4.0.9 with Sandstone 2.0.5** for the L1 launcher. This is the
-  lowest-friction, best-polish path and future-proofs us for L2 (same code runs rooted).
+- Decision (v0.1, Enact — abandoned 2026-10-20): **use Enact 4.0.9 with Sandstone 2.0.5**
+  for the L1 launcher. This is the lowest-friction, best-polish path and future-proofs us
+  for L2 (same code runs rooted).
+  - **Superseded.** Spotlight focus never worked on the TV in any v0.1.x install, and the
+    build was 14.9 MB. v0.2 is vanilla HTML/CSS/JS (~5 KB IPK). `[VERIFIED]` The `^4.0.9`
+    range actually installed Enact 4.9.8 / Sandstone 2.9.13, not the mapped versions.
+    See `06-enact-postmortem.md`.
 
 ## New blockers (opened by this pass)
 

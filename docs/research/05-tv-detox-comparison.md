@@ -76,6 +76,9 @@ into the plan.
 - **The stack.** Java + Android SDK doesn't apply to us. Our Enact + Sandstone
   choice stands for v0.1 because it buys us Spotlight (TV focus system)
   that we'd otherwise have to hand-roll in vanilla JS.
+  *Superseded 2026-10-20:* Spotlight focus never worked on the TV, so v0.2
+  did hand-roll it in vanilla JS — closer to tv-detox's "no libraries"
+  stance after all. See `06-enact-postmortem.md`.
 - **The "paste a prompt into Claude Code" install UX.** Clever on their end;
   not relevant to us because the user is already working with Claude Code —
   we don't need the launcher to re-invoke an agent.

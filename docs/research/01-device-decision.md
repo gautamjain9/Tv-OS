@@ -15,7 +15,7 @@
 | Free internal storage at project start | **1.58 GB** (budget constraint for everything we install) |
 | Total power-on time | 2456 hours (TV is well-used, not new) |
 | Auto-update | **OFF** (verified by photo; toggle in left position) |
-| TV LAN IP (today) | **192.168.29.246** |
+| TV LAN IP (2026-10-20) | **192.168.29.246** — DHCP, so it can change. Later the same day the TV did not answer at this IP (`EHOSTUNREACH`); `[UNVERIFIED]` whether it was off or re-addressed. Re-read the IP from the Dev Mode app before assuming it. |
 | Developer Mode | Installed, Dev Mode Status ON, Key Server ON |
 | **Board type** | `K8LP_DVB_AJ` (LG K8LP SoC family, DVB tuner, Asia region — reported by ares-device -i, 2026-10-20) |
 | **OTA ID** | `HE_DTV_C22P_AFADATAA` (Hub Edition DTV, C22P platform — reported by ares-device -i) |
@@ -71,4 +71,5 @@ including a replacement launcher-style home-screen app.
 | L3 | Raspberry Pi 5 running a custom "TV OS" launcher | The only path that delivers "universal, any TV, Apple-TV quality" | None (TV untouched) |
 
 Order: **L1 → L2 → L3**. L1 is the fastest-feedback loop and gives us a working codebase
-that mostly carries over to L3.
+that mostly carries over to L3. (L1 status: v0.1 Enact abandoned; v0.2.1 vanilla awaiting
+first install — see `06-enact-postmortem.md` and `docs/HANDOFF.md`.)

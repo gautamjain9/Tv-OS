@@ -6,8 +6,8 @@ If you're a new Claude instance: this is your single required read. Everything e
 If you're the user: your first message to the new Claude session is at the bottom under "User's first message."
 
 Last updated: 2026-10-20
-Last commit before this handoff: `7b662fe` (v0.1.3, abandoned)
-Current version to install: **v0.2.0** (vanilla rewrite, in `app/`)
+Last commit before this update: `f607a64` (merge of the cloud v0.2.0 work with the local docs audit + v0.1.4 attempt)
+Current version to install: **v0.2.1** (vanilla, in `app/`; = v0.2.0 + LS2-bridge fix + audit fixes)
 
 ---
 
@@ -17,11 +17,13 @@ Build a minimal, Apple-TV-quality launcher for a Digie LG-webOS-22-based TV. Rep
 
 ## 2. State of play, blunt
 
-- **TV paired and reachable.** Dev Mode installed, Key Server ON, auto-update OFF, SSH key fetched, `ares-device -i --device tv` returns live data. See `docs/research/01-device-decision.md`.
-- **TV facts:** Digie AR-50, webOS22 / 7.5.8-28, firmware 04.56.35, 1.58 GB free of 1.92 GB, boardType `K8LP_DVB_AJ`, otaId `HE_DTV_C22P_AFADATAA`, LAN IP (today) 192.168.29.246.
-- **L1 Enact scaffold abandoned.** Four install cycles iterated on an Enact + Sandstone + Spotlight focus bug that never resolved. Full postmortem: `docs/research/06-enact-postmortem.md`.
-- **L1 v0.2 vanilla rewrite complete and build-verified in cloud.** `app/` now contains ~200 lines of vanilla JS, 5.3 KB IPK, zero frameworks, zero bundlers. **Not yet installed on the TV.** That's where the next session picks up.
-- **L2 (root + home-screen takeover) deferred.** Research task #4 open; blocked on L1 proving out. See the L2 section below for what L2 would involve.
+- **Repo is merged and current on the Mac.** Two lines of work ran in parallel and were merged in `f607a64`: the cloud session's v0.2.0 rewrite + this handoff + the postmortem (`dc6405a`), and the local session's docs audit (`14842e4`) + an Enact v0.1.4 fix attempt (`bf92770`, never installed, preserved on branch `backup/local-v0.1.4`). The user's `~/Tv-OS` already has the merge. **Do not reset it to origin** (see §9). If `git status` says the branch is ahead of origin, that only means it has not been pushed yet.
+- **TV paired, but unreachable at last check.** Dev Mode installed, Key Server ON, auto-update OFF, SSH key fetched; `ares-device -i --device tv` returned live data earlier on 2026-10-20. Later that day the TV did not answer at 192.168.29.246 (`EHOSTUNREACH`) — most likely it was off, or DHCP gave it a new IP. §5 starts with a reachability check and a one-line IP fix. See `docs/research/01-device-decision.md`.
+- **TV facts:** Digie AR-50, webOS22 / 7.5.8-28, firmware 04.56.35, 1.58 GB free of 1.92 GB, boardType `K8LP_DVB_AJ`, otaId `HE_DTV_C22P_AFADATAA`, last known LAN IP 192.168.29.246, SSH port 9922, device name `tv`.
+- **L1 Enact (v0.1.0–0.1.4) abandoned.** The install cycles chased an Enact + Sandstone + Spotlight focus bug that never resolved; v0.1.3 was installed on the TV (focus result not recorded); v0.1.4 never ran. A later source audit explains it (wrong focus class, OK handler on the wrong component, launch call needing `webOSTV.js`). Full postmortem: `docs/research/06-enact-postmortem.md`.
+- **L1 v0.2.1 vanilla is what to install.** `app/` is ~200 lines of vanilla JS + one CSS file, ~5 KB IPK, zero frameworks, zero bundlers; the only devDep is `@webos-tools/cli`. v0.2.0 was build-verified in the cloud (5.3 KB IPK).
+- **Critical bug fixed before any install.** v0.2.0's `main.js` called `window.webOS.service.request`, which only exists when LG's `webOSTV.js` is loaded — and we do not load it. On the TV, OK would have done nothing. `main.js` now calls the native `WebOSServiceBridge` / `PalmServiceBridge` directly. That fix plus the other audit fixes ship as **v0.2.1**. **Nothing from v0.2.x has been installed on the TV yet.** That's where the next session picks up.
+- **L2 (root + home-screen takeover) deferred.** Blocked on L1 proving out. Research is being written in `docs/research/07-l2-boot-takeover.md`; no L2 tooling exists yet (no `l2/` directory). See §7.
 
 ## 3. The one rule
 
@@ -35,16 +37,17 @@ Every decision gets measured against that. If a feature fails the test, it doesn
 
 ```
 Tv-OS/
-├── README.md                             High-level project overview.
+├── README.md                              High-level project overview.
 ├── app/                                   The vanilla launcher (v0.2).
 │   ├── README.md                          Install + deploy quickstart.
-│   ├── package.json                       Only devDep is @webos-tools/cli.
+│   ├── package.json                       Scripts build / package / install-tv / launch-tv / deploy. Only devDep is @webos-tools/cli.
 │   ├── .npmrc                             allow-scripts list for the webOS tool.
-│   ├── scripts/build.js                   ~50-line copy-only build.
+│   ├── .gitignore                         Ignores dist/ and node_modules/.
+│   ├── scripts/build.js                   ~60-line copy-only build: wipes dist/, copies src/ + webos-meta/ into it.
 │   ├── webos-meta/
-│   │   ├── appinfo.json                   id com.tvos.launcher · requiredACG set.
-│   │   ├── icon.png                       (regen from the script in postmortem if needed)
-│   │   └── icon-large.png
+│   │   ├── appinfo.json                   id com.tvos.launcher · requiredACG application.launcher · version.
+│   │   ├── icon.png                       80 px placeholder (see research/03, finding 1).
+│   │   └── icon-large.png                 130 px placeholder.
 │   └── src/
 │       ├── index.html                     The entry.
 │       ├── styles.css                     All CSS. Tokens as :root custom properties.
@@ -52,40 +55,57 @@ Tv-OS/
 └── docs/
     ├── HANDOFF.md                         You are here.
     ├── plan/                              Project plan + install guides + philosophy.
-    │   ├── 00-project-plan.md
-    │   ├── 01-sideload-guide.md
-    │   ├── 02-laptop-setup-step-by-step.md
-    │   ├── 03-recovery-after-audit-fix.md
-    │   └── 04-design-philosophy.md
+    │   ├── 00-project-plan.md             Three-layer plan + orchestration rules.
+    │   ├── 01-sideload-guide.md           Laptop to TV workflow.
+    │   ├── 02-laptop-setup-step-by-step.md  Beginner version of 01.
+    │   ├── 03-recovery-after-audit-fix.md v0.1-only history (Enact npm recovery).
+    │   └── 04-design-philosophy.md        The one rule.
     ├── research/                          Single source of truth. Every claim tagged.
     │   ├── 00-master-findings.md
     │   ├── 01-device-decision.md
     │   ├── 02-l1-blockers-resolved.md
-    │   ├── 03-pre-sideload-audit.md
-    │   ├── 04-build-dry-run-cloud.md
+    │   ├── 03-pre-sideload-audit.md       v0.1 history.
+    │   ├── 04-build-dry-run-cloud.md      v0.1 history.
     │   ├── 05-tv-detox-comparison.md
-    │   └── 06-enact-postmortem.md
+    │   ├── 06-enact-postmortem.md
+    │   └── 07-l2-boot-takeover.md         L2 research (being written).
     ├── design/
     │   └── 01-visual-language.md          Tokens live in app/src/styles.css now.
     └── tv-side/
         └── 00-things-to-do-on-the-tv.md   TV-screen steps the user runs by hand.
 ```
 
+Not in git: `app/dist/` (build output; on the Mac it may still hold the stale v0.1.4 Enact build until the next `npm run build` wipes it) and `app/node_modules/` (may still hold old Enact packages; harmless, because `build.js` copies only `src/` and `webos-meta/` into the IPK).
+
 ## 5. The exact next thing to do
 
-**Install v0.2.0 on the TV.** Then verify three things.
+**Install v0.2.1 on the TV.** Then verify three things.
 
-Commands (user runs on their Mac, one line at a time):
+The Mac repo is already merged and current. Do **not** fetch-and-reset it (an earlier version of this section said to; that would have destroyed unpushed local commits — see §9).
+
+The user runs these on the Mac, one line at a time. First turn the TV on and open the Developer Mode app: Dev Mode Status must be ON (press Extend if the session timer is low). Then check that the TV answers:
 
 ```
-cd ~/Tv-OS && git fetch origin && git reset --hard origin/research/phase-0-feasibility
-cd ~/Tv-OS/app && npm install
+cd ~/Tv-OS/app
+ares-device -i -d tv
+```
+
+If that prints device info, go on to the install. If it fails (`EHOSTUNREACH` or a timeout), the TV is off or has a new IP. Read the IP shown in the Developer Mode app, put it in place of `NEW_IP` below, then run `ares-device -i -d tv` again:
+
+```
+ares-setup-device -m tv -i host=NEW_IP
+```
+
+Then install and deploy:
+
+```
+npm install
 npm run deploy
 ```
 
-`npm run deploy` runs: `build` → `ares-package .` in `dist/` → `ares-install -d tv ./dist/com.tvos.launcher_0.2.0_all.ipk` → `ares-launch -d tv com.tvos.launcher`.
+`npm run deploy` runs: `build` (wipes `dist/`, copies `src/` + `webos-meta/` in) → `cd dist && ares-package .` → `ares-install -d tv ./dist/com.tvos.launcher_*.ipk` (for this release that file is `com.tvos.launcher_0.2.1_all.ipk`) → `ares-launch -d tv com.tvos.launcher`.
 
-Expected: ~5 seconds total.
+Expected: the deploy takes about 5 seconds.
 
 ### Three verification questions after launch
 
@@ -98,14 +118,14 @@ If any NO → read the `#debug` overlay at the bottom-left of the screen (it rep
 
 ## 6. The hard constraints — do not forget
 
-- **Do not run `npm audit fix --force`.** Not needed here (no deps that would benefit). Breaks pins.
+- **Do not run `npm audit fix --force`.** Not needed here (no deps that would benefit). Breaks pins. (`docs/plan/03-recovery-after-audit-fix.md` is v0.1-only history.)
 - **Bump the version in BOTH `webos-meta/appinfo.json` AND `package.json` on every change you install.** webOS caches the WebView assets if the version is the same. We hit this in v0.1.
 - **Do not install LG's Developer Mode app on a rooted TV.** We're not rooted yet; relevant only if we start L2.
 - **Do not accept any firmware update** on the TV. Auto-update is OFF; keep it that way. An update may close the root window if we later open L2.
 
 ## 7. L2 — the user's actual end goal
 
-User wants Tv-OS to replace the stock webOS home screen entirely: press HOME → Tv-OS opens, not Digie's launcher. On webOS this requires:
+User wants Tv-OS to replace the stock webOS home screen entirely: press HOME → Tv-OS opens, not Digie's launcher. (Research in progress: `docs/research/07-l2-boot-takeover.md`. This section will be rewritten when it lands.) On webOS this requires:
 
 1. **Root the TV** via `faultmanager-autoroot` (works webOS 4.0+ incl. 7.5.8; `[UNVERIFIED]` on Digie Hub).
 2. **Install Homebrew Channel** on the rooted TV.
@@ -134,29 +154,28 @@ When you add a claim, add the tag. When you verify an `[UNVERIFIED]` one, upgrad
 
 Things that have bitten us or almost did, so you look for them first:
 
-- **CSS Modules + `:global(.spottable-focused)` in Enact 4.0.9.** Caused focus to never visibly land. Abandoned Enact over this.
+- **CSS Modules + `:global(.spottable-focused)` in Enact.** Caused focus to never visibly land. Abandoned Enact over this. (Later source audit: `^4.0.9` installed Enact 4.9.8, which never sets that class — see `docs/research/06-enact-postmortem.md`.)
+- **`window.webOS.service` needs `webOSTV.js` — call the native bridge.** It only exists when LG's `webOSTV.js` library is loaded, and we do not load it. Both v0.1 and v0.2.0 called it, so OK would have launched nothing on the TV. Use `window.WebOSServiceBridge` (fallback `window.PalmServiceBridge`), as `main.js` now does.
+- **Never `git reset --hard` when the local branch has unpushed commits — merge instead.** The old §5 said `git fetch origin && git reset --hard origin/...`; on the Mac that would have wiped `14842e4` and `bf92770`. Check `git status` / `git log origin/<branch>..HEAD` first, and merge.
 - **Dev Mode + root are mutually exclusive.** Installing LG's Dev Mode app on a rooted TV breaks it. Pick one path.
 - **webOS Hub != real LG webOS.** Digie uses the Hub (licensed, re-skinnable) variant. Homebrew community tests on real LG. Hub-specific behavior is `[UNVERIFIED]` by default.
-- **A Mac paste-block with `#` comments or apostrophes breaks zsh.** Give the user one command per line, no prose mixed in, no `'` in words like "haven't."
+- **A Mac paste-block with `#` comments or apostrophes breaks zsh.** Give the user one command per line, no prose mixed in, no `#` comment lines or trailing `# comments` in a block, no `'` in words like "haven't."
 - **Package-lock cross-platform.** We don't commit the vanilla v0.2 `package-lock.json` (only dep is `@webos-tools/cli` dev — fine without one). If a future refactor adds real deps, add the lock back.
 
 ## 10. Attribution
 
-Every commit this project makes ends with:
+Every commit this project makes ends with a `Co-Authored-By` line naming the model the current session runs on. For this session that is:
 
 ```
-Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
-Claude-Session: https://claude.ai/code/session_01GJSK85d6PYM4gChzn5q7gh
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 ```
 
-The specific model line may change by session (this handoff was written by claude-opus-4-7).
+A different session uses its own model name. Older commits (up to `dc6405a`) used `Claude Opus 4.7` and also appended a `Claude-Session:` URL; that URL line is not required.
 
 Every PR body ends with:
 
 ```
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-https://claude.ai/code/session_01GJSK85d6PYM4gChzn5q7gh
 ```
 
 User has not asked for PRs on this project. Push directly to `research/phase-0-feasibility` or whatever branch is current.
@@ -167,6 +186,6 @@ User has not asked for PRs on this project. Push directly to `research/phase-0-f
 
 Paste exactly:
 
-> Read docs/HANDOFF.md and continue from there. The TV is paired, dev mode is on, I'm on my Mac in ~/Tv-OS. Walk me through installing v0.2.0 one command at a time. Zero prose mixed into commands, zero apostrophes, zero `#` comments — zsh breaks on them.
+> Read docs/HANDOFF.md and continue from there. The TV is paired, dev mode is on, I'm on my Mac in ~/Tv-OS and the repo is already merged, so do not reset it. Walk me through installing v0.2.1 one command at a time, starting with checking that the TV answers. Zero prose mixed into commands, zero apostrophes, zero `#` comments — zsh breaks on them.
 
 Then proceed with the three verification questions in §5.

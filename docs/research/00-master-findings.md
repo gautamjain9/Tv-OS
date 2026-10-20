@@ -7,7 +7,7 @@ findings here so nothing has to be re-derived. Every factual claim is tagged:
 - `[UNVERIFIED]` — plausible but not yet confirmed; must be proven before we rely on it.
 - `[FALSE]` — a thing we initially assumed or a common myth that the research disproved.
 
-Last updated: 2026-10-20 (docs audit: on-TV readout folded in)
+Last updated: 2026-10-20 (second docs audit: Enact abandoned, v0.2 vanilla, LS2-bridge finding)
 
 ---
 
@@ -42,7 +42,11 @@ The user's TV is a **Digie-brand webOS TV**, not a genuine LG TV.
 - `[VERIFIED]` Model **AR-50**; webOS **22 / 7.5.8-28**; firmware build **04.56.35**;
   platform **webOS Hub**; board `K8LP_DVB_AJ`; OTA ID `HE_DTV_C22P_AFADATAA`.
 - `[VERIFIED]` Developer Mode app is available on this Hub TV and works: Dev Mode ON,
-  Key Server ON, `ares-device -i` pairing verified, Tv-OS IPK sideloaded and running.
+  Key Server ON, `ares-device -i` pairing verified, Tv-OS v0.1.x (Enact) IPKs sideloaded
+  and running (focus broken — see `06-enact-postmortem.md`). v0.2.x not yet installed.
+- `[VERIFIED]` Last known LAN IP 192.168.29.246, SSH port 9922, device name `tv`. At the
+  last check (2026-10-20) the TV did not answer at that IP (`EHOSTUNREACH`) — `[UNVERIFIED]`
+  whether it was off or DHCP gave it a new IP.
 - `[VERIFIED]` Storage: 1.92 GB total, 1.58 GB free at project start.
 - `[UNVERIFIED]` RAM of this specific unit (other Digie models list 1 GB; not read off
   this TV yet).
@@ -85,7 +89,8 @@ webosbrew community). Research framed strictly around that.
   compositor/launcher with something Apple-TV-fast. `[UNVERIFIED]` and fragile to try.
 - Biggest realistic wins from root: remove bloat, disable telemetry/ads, SSH access, run
   homebrew apps, set a custom startup app. Real but modest, and capped by 1GB RAM.
-- L2 research in progress: `docs/research/06-l2-*.md`, tooling under `l2/`.
+- L2 research in progress: `docs/research/07-l2-boot-takeover.md` (being written). No L2
+  tooling exists yet (there is no `l2/` directory).
 
 ---
 
@@ -103,6 +108,12 @@ webosbrew community). Research framed strictly around that.
   A custom launcher-style "home" app is buildable this way. `[VERIFIED]` (via community
   sources, `02-l1-blockers-resolved.md`) that Dev Mode alone gives **no** boot persistence
   or HOME takeover — that needs root (L2).
+- `[VERIFIED]` (LG `webOSTV.js` API; installed `@enact/webos` 4.9.8 source) `window.webOS.service.request`
+  exists only when LG's `webOSTV.js` library is loaded. Without it, call the native
+  `window.WebOSServiceBridge` (older name `window.PalmServiceBridge`) — that is what
+  `webOSTV.js` and Enact's `LS2Request` do internally. Both v0.1 and v0.2.0 got this wrong;
+  v0.2.1 calls the bridge directly. `[UNVERIFIED]` on this TV until v0.2.1 is installed.
+  Details: `06-enact-postmortem.md` → "Later source audit".
 
 ---
 
@@ -111,7 +122,9 @@ webosbrew community). Research framed strictly around that.
 - User chose: **"Modify the TV itself (webOS homebrew)."**
 - Orchestrator's honest assessment: hardware (1GB RAM) caps the ceiling hard; the third-party
   Hub firmware makes root `[UNVERIFIED]`. First gate (Developer Mode on the physical TV) is
-  **passed**; L1 launcher is sideloaded and iterating (v0.1.x). L2 is now open.
+  **passed**. L1 v0.1.x (Enact) was sideloaded, never got working focus, and was abandoned;
+  L1 v0.2.1 (vanilla HTML/CSS/JS, ~5 KB IPK) is built and waiting for its first install.
+  L2 research is open (`07-l2-boot-takeover.md`).
 
 ### Open action items (need the physical TV / user input)
 - [x] Read exact model number + webOS version off the TV — AR-50, webOS 22 / 7.5.8-28.

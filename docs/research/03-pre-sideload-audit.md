@@ -1,5 +1,10 @@
 # 03 — Pre-Sideload Audit (2026-10-20)
 
+> **v0.1 (Enact, abandoned) history.** This audit covers the Enact app tree, which was
+> removed in the v0.2.0 vanilla rewrite (`dc6405a`). Files like `TopBar.js`, `Tile.js` and
+> `HomePanel.js` no longer exist, and `npm run pack-p` no longer exists (v0.2 builds with
+> `npm run build` / `npm run deploy`). Kept as a record. Current state: `docs/HANDOFF.md`.
+
 Done at the user's explicit request: "check correctly before moving to Part E,
 that all the before aligned jobs are done and correctly aligned." Zero-trust
 sweep of the whole project before anyone touches the TV.
@@ -31,6 +36,13 @@ sweep of the whole project before anyone touches the TV.
 3. **Does the Tv-OS tile appear in the TV's HOME grid, or is it hidden** (the "newer firmware hides sideloaded apps" issue flagged in `02-l1-blockers-resolved.md`)? Unknown. If hidden, we launch via `ares-launch` as a workaround.
 
 None of these three unknowns can be answered without actually installing on the TV. They are the right things to learn next.
+
+**Status 2026-10-20 (after v0.1.0–0.1.2 installs and the v0.2 rewrite):**
+1. `[VERIFIED]` Answered — `enact pack -p` built on the Mac (Node v24) and the IPK installed.
+2. Still open. No tile ever launched an app in v0.1 (OK did nothing, and the launch call
+   depended on `webOSTV.js`, which was never loaded — see `06-enact-postmortem.md`). The
+   same IDs are in v0.2.1's `main.js`; `[UNVERIFIED]` until v0.2.1 is installed.
+3. Still open — no answer recorded in these docs. `[UNVERIFIED]`.
 
 ## Not-blockers deliberately left as-is
 

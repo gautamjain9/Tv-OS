@@ -7,7 +7,7 @@
 	/* Backgrounds */
 	--bg-base: #0A0A0C;
 	--bg-elevated: #1A1A20;
-	--bg-hover: #26262E;
+	--bg-focus: rgba(255, 255, 255, 0.08); /* overlay on the focused tile */
 
 	/* Foregrounds */
 	--fg-primary: #FFFFFF;
@@ -20,7 +20,6 @@
 
 	/* Borders */
 	--border-subtle: rgba(255, 255, 255, 0.12);
-	--border-strong: rgba(255, 255, 255, 0.95);
 
 	/* Motion */
 	--ease-snap: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -33,6 +32,9 @@
 	--tile-input-h: 160px;
 	--tile-gap: 40px;
 	--gutter: 120px;
+	/* Room inside a scroller for the focused tile: 1.06 scale + 6px ring +
+	 * 48px glow reach ~77px past the tile edge. */
+	--focus-bleed: 80px;
 }
 
 * { box-sizing: border-box; }
@@ -44,11 +46,13 @@ html, body {
 	padding: 0;
 	background: var(--bg-base);
 	color: var(--fg-primary);
-	font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+	/* LG Smart UI is the webOS system font (local, no download). */
+	font-family: "LG Smart UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	overflow: hidden;
-	cursor: none; /* no pointer on TV */
+	/* No cursor: none — webOS only shows the pointer while the Magic Remote
+	 * is in pointer mode, and hiding it would make pointing unusable. */
 }
 
 .app {
@@ -94,9 +98,13 @@ html, body {
 	display: flex;
 	gap: var(--tile-gap);
 	overflow-x: auto;
-	padding-bottom: 8px;
-	scrollbar-width: none;
+	/* overflow-x: auto clips the y axis too; pad (and pull back) so the
+	 * focused tile's scale + ring + glow are not cut off. */
+	padding: var(--focus-bleed);
+	margin: calc(-1 * var(--focus-bleed));
+	position: relative; /* offsetParent for tiles, so main.js can scroll the row */
 }
+/* Chromium 87 has no scrollbar-width; this is how it hides the bar. */
 .scroller::-webkit-scrollbar { display: none; }
 
 /* Tiles */
@@ -111,11 +119,34 @@ html, body {
 	align-items: flex-end;
 	position: relative;
 	outline: none;
-	transition:
-		transform var(--dur-focus) var(--ease-snap),
-		box-shadow var(--dur-focus) var(--ease-snap),
-		background var(--dur-focus) var(--ease-snap),
-		border-color var(--dur-focus) var(--ease-snap);
+	/* <button> resets: inherit our font and colour, label bottom-left. */
+	margin: 0;
+	padding: 0;
+	font: inherit;
+	color: inherit;
+	text-align: left;
+	transition: transform var(--dur-focus) var(--ease-snap);
+}
+/* Ring, glow and focus tint live on a pseudo-element whose OPACITY
+ * animates, so a focus move animates only transform + opacity (compositor
+ * work) and never repaints box-shadow on the TV SoC. */
+.tile::after {
+	content: '';
+	position: absolute;
+	/* Longhands, not inset: that shorthand only landed in Chromium 87,
+	 * the exact engine version we target, so keep a margin of safety. */
+	top: -1px;
+	right: -1px;
+	bottom: -1px;
+	left: -1px;
+	border-radius: inherit;
+	background: var(--bg-focus);
+	box-shadow:
+		0 0 0 6px rgba(255, 255, 255, 0.95),
+		0 0 48px 12px var(--accent-glow);
+	opacity: 0;
+	transition: opacity var(--dur-focus) var(--ease-snap);
+	pointer-events: none;
 }
 .tile[data-variant="input"] {
 	flex: 0 0 var(--tile-input-w);
@@ -131,18 +162,12 @@ html, body {
 	letter-spacing: -0.2px;
 }
 
-/* Focus — triggered by native DOM focus. We own the key handling, so
- * elem.focus() is always what Spotlight state is based on. */
-.tile:focus,
-.tile.focused {
+/* Focus — native DOM focus; main.js calls element.focus() on every move. */
+.tile:focus {
 	transform: scale(1.06);
-	background: var(--bg-hover);
-	border-color: var(--border-strong);
-	box-shadow:
-		0 0 0 6px rgba(255, 255, 255, 0.95),
-		0 0 48px 12px var(--accent-glow);
 	z-index: 1;
 }
+.tile:focus::after { opacity: 1; }
 
 /* Debug overlay — remove once stable. */
 .debug {

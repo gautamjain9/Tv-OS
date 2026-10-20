@@ -3,6 +3,12 @@
 This is the beginner-friendly, zero-jargon version of `01-sideload-guide.md`.
 Read on mobile; run on laptop.
 
+It installs the **v0.2 launcher** (plain HTML/CSS/JS, built with `npm run deploy`). The
+old v0.1 steps (`npm run pack-p`) are gone along with Enact.
+
+Every grey command box below is safe to paste into the Mac Terminal: one command per
+line, no `#` comments, no apostrophes. Paste one line at a time if you are unsure.
+
 **Before you start**, write down these three things on paper or in a note:
 - Your TV's IP address (shown on the Developer Mode app on the TV): __________
 - Your TV's Dev Mode passphrase (shown on the Developer Mode app on the TV): __________
@@ -88,7 +94,16 @@ Should print a version like `Version: 3.0.0`. If "command not found," the instal
 
 ## PART D — Download the Tv-OS code
 
-Still in the terminal:
+**Already have a `Tv-OS` folder on this laptop?** Skip the download. Do not download it
+again and do not reset it (that can wipe work that only exists on your laptop). Just run
+these two lines, then go to Part E (or straight to Part F if the TV is already paired):
+
+```bash
+cd ~/Tv-OS/app
+npm install
+```
+
+**First time on this laptop?** Still in the terminal:
 
 ```bash
 cd ~
@@ -105,7 +120,7 @@ Explanation of each line:
 - `cd Tv-OS` → enter the folder you just downloaded
 - `git checkout research/phase-0-feasibility` → switch to the branch with the latest work
 - `cd app` → enter the launcher-app sub-folder
-- `npm install` → downloads all the libraries the app needs (will take 1-3 min, will print a lot of text, that's normal)
+- `npm install` → downloads the webOS tool the build uses (the launcher itself needs no libraries). Usually under a minute; some yellow warnings are normal
 
 If any line fails, STOP and paste the exact error message to me.
 
@@ -155,30 +170,34 @@ If this prints a list of app IDs installed on the TV, pairing is good. Move on.
 
 Still in the terminal, still inside the `app` folder.
 
-```bash
-npm run pack-p
-```
-
-Watch the output — should end with "Compiled successfully". Takes 30-90 seconds.
+First, check the TV answers (the TV must be on, with the Developer Mode app showing Dev Mode Status ON):
 
 ```bash
-cd dist
-ares-package .
+ares-device -i -d tv
 ```
 
-The `.` is important — it means "the current folder."  Output: a file named something like `com.tvos.launcher_0.1.3_all.ipk` in the `dist` folder (the number is the app version, so it changes as we ship updates).
+If it prints a list of details about the TV, go on. If it says `EHOSTUNREACH` or hangs, see "TV IP changed" at the bottom of this page, then try again.
+
+Now build, package, install and launch, all in one:
 
 ```bash
-ares-install -d tv ./com.tvos.launcher_*_all.ipk
+npm run deploy
 ```
 
-Should print "Success". The app is now on your TV.
-
-```bash
-ares-launch -d tv com.tvos.launcher
-```
+It takes a few seconds. You should see lines starting with `[build]`, then a line naming a file like `com.tvos.launcher_0.2.1_all.ipk` (the number is the app version, so it changes as we ship updates), then "Success".
 
 **Look at the TV.** The Tv-OS launcher should open on screen.
+
+If you ever want to do the same thing one step at a time, these lines do exactly what `npm run deploy` does. The `.` after `ares-package` means "the current folder", and the last line takes you back to the `app` folder:
+
+```bash
+npm run build
+cd dist
+ares-package .
+ares-install -d tv ./com.tvos.launcher_*_all.ipk
+ares-launch -d tv com.tvos.launcher
+cd ..
+```
 
 ---
 
@@ -186,7 +205,7 @@ ares-launch -d tv com.tvos.launcher
 
 Please answer these three things so we know what to build next:
 
-1. **Did the Tv-OS launcher open on the TV?** (dark screen, time at the top, "Apps" row, "Inputs" row)
+1. **Did the Tv-OS launcher open on the TV?** (dark screen, time at the top, "Apps" row, "Inputs" row, a white ring around the first tile, and a small grey text line at the bottom-left)
 2. **Pick a tile with the remote, press OK — does it launch the real app?** (e.g. selecting "YouTube" opens YouTube)
 3. **Press the HOME button on the remote. Then look for "Tv-OS" in the app list.** Is it there, or hidden?
 
@@ -197,7 +216,10 @@ Those three answers decide whether we polish the launcher next, start the root p
 ## Common things that go wrong
 
 - **"command not found: ares"** → Node is installed but the webOS CLI isn't on PATH. On Windows, close terminal and reopen. On macOS, run `echo $PATH` and tell me the output.
-- **TV IP changed** → run `ares-setup-device`, choose **modify**, update the IP.
+- **TV IP changed** (or `ares-device -i -d tv` says `EHOSTUNREACH`) → make sure the TV is on, read the IP on the Developer Mode app screen, and run this line with that IP in place of `NEW_IP`. Then rerun `ares-device -i -d tv`.
+  ```bash
+  ares-setup-device -m tv -i host=NEW_IP
+  ```
 - **Dev Mode expired** → open Dev Mode app on TV, press **Extend**. It gives you more hours. Then rerun from Part E's verify step.
 - **"ssh: connect to host X port 9922: Connection refused"** → Dev Mode is OFF on the TV, or Key Server is OFF, or wrong IP.
 - **The app installs but doesn't appear in the TV's app grid when you press HOME** → this is the "firmware may hide sideloaded apps" issue we expected. Launching via `ares-launch` still works. We'll handle this in L2.

@@ -1,5 +1,11 @@
 # 04 — Build Dry-Run in Cloud Container (2026-10-20)
 
+> **v0.1 (Enact, abandoned) history.** This dry-run is for the Enact build
+> (`npm run pack-p`, 14.9 MB IPK). v0.2 has no Enact and builds with `npm run build` /
+> `npm run deploy` into a ~5 KB IPK. "Enact 4.0.9" below is the `^4.0.9` floor in
+> `package.json`; on the user's Mac that range installed Enact 4.9.8 `[VERIFIED]`, and
+> `[UNVERIFIED]` which 4.x the cloud container resolved. See `06-enact-postmortem.md`.
+
 Done at the user's insistence: "be your own critique, don't try to rush, be
 patient and clean enough with the build." Full end-to-end build of the L1
 launcher inside the cloud container, with the same Node + the same
@@ -44,9 +50,9 @@ link + `main.js` script. Exactly what we want.
 | `enact pack -p` produces `index.html` that mounts the React tree at `<div id="root">`. | **TRUE.** Verified. |
 | `kind()` + `styles: {css, className: '…'}` compiles with Enact 4.0.9. | **TRUE.** No errors in build output. |
 | My audit's refactor of TopBar.js (hooks outside `kind`) builds. | **TRUE.** |
-| `:global(.spottable-focused)` LESS selector compiles correctly through Enact's CSS-modules pipeline. | **TRUE.** No LESS errors. |
+| `:global(.spottable-focused)` LESS selector compiles correctly through Enact's CSS-modules pipeline. | **TRUE.** No LESS errors. *Later:* it compiled but could never match — the installed Enact 4.9.8 never sets that class `[VERIFIED]` (source grep, `06-enact-postmortem.md`). |
 | The `main` field in package.json must be `src/index.js` (not absent, not `index.js`). | **TRUE.** The absence caused "Module not found: Can't resolve '/Users/.../app' in '/Users/.../app'" on the user's first attempt. Fixed. |
-| Spottable fires `onClick` on remote OK/Enter press (via `emulateMouse: true`, `selectionKeys: [13, 16777221]`). | **DOCUMENTED by Enact.** Can't verify without a TV; low risk. |
+| Spottable fires `onClick` on remote OK/Enter press (via `emulateMouse: true`, `selectionKeys: [13, 16777221]`). | **DOCUMENTED by Enact.** Can't verify without a TV; low risk. *Later:* it fires the Spottable's **own** `onClick` prop; our `Tile` put `onClick` on the inner component, so OK called nothing `[VERIFIED]` (source, `06-enact-postmortem.md`). |
 
 ## Known bloat (deferred to v0.2)
 
