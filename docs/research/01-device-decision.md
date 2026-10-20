@@ -8,6 +8,7 @@
 | Serial | AR240701842A0884 |
 | webOS version | **webOS 22 / 7.5.8-28** |
 | Internal storage | 1.92 GB |
+| TV firmware / software build | 04.56.35 (reported 2026-10-20; this is the Digie model-specific build string, not the webOS release) |
 | Developer Mode | Already installed and working |
 | Underlying platform | LG webOS Hub (licensed to Digie, manufactured by Candid Automation, Ghaziabad) |
 
