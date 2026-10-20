@@ -5,6 +5,7 @@
   "private": true,
   "license": "MIT",
   "author": "Gautam Jain",
+  "main": "src/index.js",
   "scripts": {
     "serve": "enact serve",
     "pack": "enact pack",
