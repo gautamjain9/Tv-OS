@@ -1,6 +1,14 @@
 @import '../theme/tokens.less';
 
 .homePanel {
-	padding: 48px @gutter-side 0;
+	// Full-bleed dark background; content vertically centered-ish with
+	// more top padding than before so the layout breathes on a 50"+ screen.
+	width: 100vw;
+	min-height: 100vh;
+	padding: 120px 120px 80px;
 	background: @bg-base;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 56px;
 }

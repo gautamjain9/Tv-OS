@@ -4,38 +4,49 @@
 	flex: 0 0 @tile-w;
 	width: @tile-w;
 	height: @tile-h;
-	border-radius: 16px;
+	border-radius: 20px;
 	background: @bg-elevated;
+	// Subtle top-highlight on border for the "lifted" look.
 	border: 1px solid @border-subtle;
 	display: flex;
 	align-items: flex-end;
 	cursor: pointer;
-	transition: transform @dur-focus @ease-snap,
-	            box-shadow @dur-focus @ease-snap,
-	            background @dur-focus @ease-snap;
-	// Enact adds .spottable + .spottable-focused classes; we hook .spottable-focused.
+	position: relative;
+	transition:
+		transform @dur-focus @ease-snap,
+		box-shadow @dur-focus @ease-snap,
+		background @dur-focus @ease-snap,
+		border-color @dur-focus @ease-snap;
+
+	// Focus state — needs to be unmistakable on a glossy TV. White ring
+	// at a visible offset + strong accent glow + scale lift.
 	&:global(.spottable-focused) {
 		transform: scale(1.06);
 		background: @bg-hover;
-		box-shadow: 0 0 0 4px rgba(255,255,255,0.9),
-		            0 0 48px 8px @accent-glow;
+		border-color: @border-strong;
+		box-shadow:
+			0 0 0 6px rgba(255, 255, 255, 0.95),
+			0 0 48px 12px @accent-glow;
+		z-index: 1;
 	}
-	// Input tiles are a touch smaller + different accent.
+
+	// Input tiles are smaller.
 	&[data-variant='input'] {
-		height: 120px;
-		flex: 0 0 220px;
-		width: 220px;
+		flex: 0 0 @tile-input-w;
+		width: @tile-input-w;
+		height: @tile-input-h;
 	}
 }
 
 .inner {
 	width: 100%;
-	padding: 20px 24px;
+	padding: 28px 32px;
 }
 
 .label {
-	font-size: 22px;
-	font-weight: 500;
-	line-height: 28px;
+	font-size: 30px;
+	font-weight: 600;
+	line-height: 36px;
 	color: @fg-primary;
+	letter-spacing: -0.2px;
 }
